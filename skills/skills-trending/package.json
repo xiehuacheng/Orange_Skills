@@ -1,0 +1,19 @@
+{
+  "name": "skills-trending",
+  "version": "1.0.0",
+  "description": "Discover trending and hot Agent Skills across multiple leaderboards",
+  "main": "scripts/fetch-trends.js",
+  "scripts": {
+    "trends": "node scripts/fetch-trends.js",
+    "trends:frontend": "node scripts/fetch-trends.js --category frontend",
+    "trends:testing": "node scripts/fetch-trends.js --category testing"
+  },
+  "keywords": [
+    "agent-skills",
+    "claude-code",
+    "codex",
+    "skills-trending",
+    "leaderboard"
+  ],
+  "license": "MIT"
+}

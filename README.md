@@ -23,30 +23,6 @@ npx skills add xiehuacheng/Orange_Skills@hot-skills
 npx skills add /path/to/Orange_Skills@hot-skills
 ```
 
-## 使用示例
-
-以 `hot-skills` 为例：
-
-```bash
-# 查看 Top 20 热门 skill
-node skills/hot-skills/scripts/fetch-trends.js
-
-# 查看 Top 10 前端相关 skill
-node skills/hot-skills/scripts/fetch-trends.js --category frontend --top 10
-
-# 搜索 testing 相关 skill
-node skills/hot-skills/scripts/fetch-trends.js --search testing
-
-# 查看 skills.sh 24h 趋势榜
-node skills/hot-skills/scripts/fetch-trends.js --trending --top 10
-
-# 强制刷新数据并以 JSON 输出
-node skills/hot-skills/scripts/fetch-trends.js --refresh --json
-
-# 安装 init-agent-wiki 后，在 agent 环境中使用 /init-agent-wiki 初始化一个领域的 wiki
-npx skills add xiehuacheng/Orange_Skills@init-agent-wiki
-```
-
 ## 项目特点
 
 - **多 skill 仓库结构**：方便后续不断扩展新的 skills

@@ -1,8 +1,8 @@
 const SKILLS_RANK_API = 'https://skills-rank.com/api';
 const DEFAULT_LEADERBOARD_ITEMS = 150;
 const DEFAULT_DETAIL_REPOS = 30;
-const DETAIL_CONCURRENCY = 2;
-const DETAIL_DELAY_MS = 300;
+const DETAIL_CONCURRENCY = 5;
+const DETAIL_DELAY_MS = 100;
 const REQUEST_TIMEOUT_MS = 30_000;
 const MAX_RETRIES = 2;
 

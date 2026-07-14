@@ -106,18 +106,52 @@ async function fetchAllData() {
   const agentskills = await agentskillsPromise;
 
   console.error('Fetching data from skills-rank.com search API (top repos)...');
-  const skillsrankDetailsPromise = parseSkillsRankDetails(agentskills, { maxRepos: 40 }).catch(err => {
+  const skillsrankDetailsPromise = parseSkillsRankDetails(agentskills, { maxRepos: 30 }).catch(err => {
     console.error('skills-rank.com detail fetch failed:', err.message);
     return [];
   });
 
-  const [skillsrank, skillsrankDetails, skillssh] = await Promise.all([
+  // Fallback: as soon as the first detail pass finishes, search high-starred
+  // repos that still lack installs. This runs concurrently with skills.sh.
+  const missingDetailsPromise = (async () => {
+    const details = await skillsrankDetailsPromise;
+    const repoStarsMap = buildRepoStarsMap(agentskills);
+    const enrichedDetails = enrichWithRepoStars(details, repoStarsMap);
+    const repoInstalls = aggregateRepoInstalls(enrichedDetails);
+
+    const searchedRepoKeys = new Set(
+      agentskills
+        .filter(repo => repo.stars > 0)
+        .sort((a, b) => b.stars - a.stars)
+        .slice(0, 30)
+        .map(repo => (repo.full_name || repo.id || '').toLowerCase())
+    );
+
+    const missingRepos = findReposMissingInstalls(
+      agentskills,
+      repoInstalls.installs,
+      searchedRepoKeys,
+      { minStars: 10_000, maxRepos: 15 }
+    );
+
+    if (missingRepos.length > 0) {
+      console.error(`Searching skills-rank.com for ${missingRepos.length} repos still missing installs...`);
+      return parseSkillsRankDetails(missingRepos, { maxRepos: missingRepos.length }).catch(err => {
+        console.error('skills-rank.com missing-installs search failed:', err.message);
+        return [];
+      });
+    }
+    return [];
+  })();
+
+  const [skillsrank, skillsrankDetails, skillssh, missingDetails] = await Promise.all([
     skillsrankPromise,
     skillsrankDetailsPromise,
-    skillsshPromise
+    skillsshPromise,
+    missingDetailsPromise
   ]);
 
-  return { agentskills, skillsrank, skillsrankDetails, skillssh };
+  return { agentskills, skillsrank, skillsrankDetails: [...skillsrankDetails, ...missingDetails], skillssh };
 }
 
 function buildRepoStarsMap(agentskills) {
@@ -243,50 +277,19 @@ async function main() {
   if (!data) {
     const fetched = await fetchAllData();
 
-    // Track which repos were already searched in the first pass so we don't
-    // re-query them in the missing-installs fallback.
-    const searchedRepoKeys = new Set(
-      fetched.agentskills
-        .filter(repo => repo.stars > 0)
-        .sort((a, b) => b.stars - a.stars)
-        .slice(0, 40)
-        .map(repo => (repo.full_name || repo.id || '').toLowerCase())
-    );
-
     // Inherit repo-level stars from agentskills.media for individual skills
     // that only have install counts from skills-rank.com or skills.sh.
     const repoStarsMap = buildRepoStarsMap(fetched.agentskills);
     const enrichedSkillsRank = enrichWithRepoStars(fetched.skillsrank, repoStarsMap);
-    let enrichedSkillsRankDetails = enrichWithRepoStars(fetched.skillsrankDetails, repoStarsMap);
+    const enrichedSkillsRankDetails = enrichWithRepoStars(fetched.skillsrankDetails, repoStarsMap);
     const enrichedSkillsSh = enrichWithRepoStars(fetched.skillssh, repoStarsMap);
 
     // Aggregate installs from individual skill details back to repo-level skills.
-    let repoInstalls = aggregateRepoInstalls([
+    const repoInstalls = aggregateRepoInstalls([
       ...enrichedSkillsRankDetails,
       ...enrichedSkillsSh
     ]);
-    let enrichedAgentskills = applyAggregatedInstalls(fetched.agentskills, repoInstalls);
-
-    // Fallback: directly search high-starred repos that still lack installs.
-    // The initial passes may miss some repos, and skills-rank.com search
-    // can find installs for them even when they are not in the leaderboards.
-    const missingRepos = findReposMissingInstalls(
-      enrichedAgentskills,
-      repoInstalls.installs,
-      searchedRepoKeys,
-      { minStars: 10_000, maxRepos: 20 }
-    );
-
-    if (missingRepos.length > 0) {
-      console.error(`Searching skills-rank.com for ${missingRepos.length} repos still missing installs...`);
-      const missingDetails = await parseSkillsRankDetails(missingRepos, { maxRepos: missingRepos.length });
-      enrichedSkillsRankDetails = enrichedSkillsRankDetails.concat(missingDetails);
-      repoInstalls = aggregateRepoInstalls([
-        ...enrichedSkillsRankDetails,
-        ...enrichedSkillsSh
-      ]);
-      enrichedAgentskills = applyAggregatedInstalls(enrichedAgentskills, repoInstalls);
-    }
+    const enrichedAgentskills = applyAggregatedInstalls(fetched.agentskills, repoInstalls);
 
     const allItems = [
       ...enrichedAgentskills,

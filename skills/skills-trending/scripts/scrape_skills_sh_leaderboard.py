@@ -118,7 +118,7 @@ async def scrape_leaderboard():
         while no_change_count < max_no_change and scroll_count < max_scrolls:
             previous_total = len(seen_skills) + len(seen_groups)
             await page.evaluate("() => window.scrollBy(0, 800)")
-            await page.wait_for_timeout(1200)
+            await page.wait_for_timeout(800)
             scroll_count += 1
 
             added = add_rows(await extract_rows())

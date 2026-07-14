@@ -253,12 +253,15 @@ async function main() {
     const enrichedSkillsSh = enrichWithRepoStars(fetched.skillssh, repoStarsMap);
 
     // Aggregate installs from individual skill details back to repo-level skills.
-    let repoInstallsMap = aggregateRepoInstalls(enrichedSkillsRankDetails);
+    let repoInstallsMap = aggregateRepoInstalls([
+      ...enrichedSkillsRankDetails,
+      ...enrichedSkillsSh
+    ]);
     let enrichedAgentskills = applyAggregatedInstalls(fetched.agentskills, repoInstallsMap);
 
     // Fallback: directly search high-starred repos that still lack installs.
-    // The initial top-40 pass may miss some repos, and skills-rank.com search
-    // can find installs for them even when they are not in the leaderboard.
+    // The initial passes may miss some repos, and skills-rank.com search
+    // can find installs for them even when they are not in the leaderboards.
     const missingRepos = findReposMissingInstalls(
       enrichedAgentskills,
       repoInstallsMap,
@@ -270,7 +273,10 @@ async function main() {
       console.error(`Searching skills-rank.com for ${missingRepos.length} repos still missing installs...`);
       const missingDetails = await parseSkillsRankDetails(missingRepos, { maxRepos: missingRepos.length });
       enrichedSkillsRankDetails = enrichedSkillsRankDetails.concat(missingDetails);
-      repoInstallsMap = aggregateRepoInstalls(enrichedSkillsRankDetails);
+      repoInstallsMap = aggregateRepoInstalls([
+        ...enrichedSkillsRankDetails,
+        ...enrichedSkillsSh
+      ]);
       enrichedAgentskills = applyAggregatedInstalls(enrichedAgentskills, repoInstallsMap);
     }
 

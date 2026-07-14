@@ -6,26 +6,20 @@
 
 | Skill | 描述 |
 |-------|------|
-| [`skills-trending`](./skills/skills-trending) | 聚合多个排行榜的热门 Agent Skills，支持分类筛选、关键词搜索和 JSON 输出 |
+| [`skills-trending`](./skills/skills-trending) | 聚合多个排行榜的热门 Agent Skills，支持分类筛选、关键词搜索、24h 趋势榜和 JSON 输出 |
 
 ## 安装方法
 
 使用 [skills.sh](https://skills.sh/) CLI 安装指定 skill：
 
 ```bash
-npx skills add xiehuacheng/Orange_Skills --skill skills-trending
-```
-
-或者一次性安装仓库中的所有 skills：
-
-```bash
-npx skills add xiehuacheng/Orange_Skills
+npx skills add xiehuacheng/Orange_Skills@skills-trending
 ```
 
 本地测试时也可以直接指定路径：
 
 ```bash
-npx skills add /path/to/Orange_Skills --skill skills-trending
+npx skills add /path/to/Orange_Skills@skills-trending
 ```
 
 ## 使用示例
@@ -41,6 +35,9 @@ node skills/skills-trending/scripts/fetch-trends.js --category frontend --top 10
 
 # 搜索 testing 相关 skill
 node skills/skills-trending/scripts/fetch-trends.js --search testing
+
+# 查看 skills.sh 24h 趋势榜
+node skills/skills-trending/scripts/fetch-trends.js --trending --top 10
 
 # 强制刷新数据并以 JSON 输出
 node skills/skills-trending/scripts/fetch-trends.js --refresh --json

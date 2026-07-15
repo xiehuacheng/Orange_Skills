@@ -8,6 +8,7 @@
 |-------|------|
 | [`hot-skills`](./skills/hot-skills) | 聚合多个排行榜的热门 Agent Skills，支持分类筛选、关键词搜索、24h 趋势榜和 JSON 输出 |
 | [`init-llm-wiki`](./skills/init-llm-wiki) | 根据指定领域初始化并维护 Karpathy 式 LLM Wiki，兼容 Google Cloud OKF 0.1 |
+| [`github-asset-manager`](./skills/github-asset-manager) | 整理 GitHub Stars、审计个人仓库、生成 Profile README、补全仓库元数据草案 |
 
 ## 安装方法
 

@@ -1,6 +1,9 @@
 ---
 name: init-llm-wiki
-description: 根据指定领域，初始化并维护一个 Obsidian 优先、兼容 Google Cloud OKF 0.1 的 Karpathy 式 LLM Wiki。
+description: 根据指定领域，初始化并维护一个 Obsidian 优先、兼容 Google Cloud OKF 0.1 的 Karpathy 式 LLM Wiki。Use when the user wants to build or maintain a Karpathy-style LLM wiki for a new domain.
+metadata:
+  author: xiehuacheng
+  version: "1.0.0"
 ---
 
 # 构建 LLM Wiki

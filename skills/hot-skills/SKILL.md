@@ -1,6 +1,9 @@
 ---
 name: hot-skills
 description: Discover hot and trending Agent Skills across multiple leaderboards (agentskills.media, skills-rank.com, skills.sh). Summarize, categorize, and search. Use when the user asks about popular skills, hot skills, trending skills, or wants to find skills by category.
+metadata:
+  author: xiehuacheng
+  version: "1.0.0"
 ---
 
 # Hot Skills

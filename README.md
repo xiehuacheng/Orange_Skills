@@ -9,6 +9,7 @@
   - [hot-skills](#hot-skills)
   - [init-llm-wiki](#init-llm-wiki)
   - [github-asset-manager](#github-asset-manager)
+  - [creating-skills](#creating-skills)
 - [贡献](#贡献)
 - [许可证](#许可证)
 
@@ -62,6 +63,12 @@ npx skills add /path/to/Orange_Skills@hot-skills
 [`github-asset-manager`](./skills/github-asset-manager) 用于整理和改善 GitHub 数字资产。
 
 它通过 GitHub CLI 或 `GITHUB_TOKEN` 读取数据，提供多个本地分析命令：分析并分类 GitHub Stars、审计个人仓库健康度、生成 GitHub Profile README、为指定仓库补全描述与 topics、以及将 Stars 整理进 GitHub Lists。所有写操作都需要用户明确确认，默认只输出结构化 Markdown 报告。
+
+### creating-skills
+
+[`creating-skills`](./skills/creating-skills) 用于创建新的 Agent Skill。
+
+它通过协作式头脑风暴帮助用户澄清 skill 的场景、触发时机和范围，提供命名与结构建议，并内置 `init_skill.py` 脚手架和 `quick_validate.py` 校验脚本。强调人在回路中的确认节点、渐进式披露、以及脚本间优先使用 stdin/stdout 组合而非中间文件。
 
 ## 贡献
 

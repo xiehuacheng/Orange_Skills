@@ -23,6 +23,8 @@ function parseArgs(argv) {
     featuredSort: 'stars',
     featuredStyle: 'static',
     featuredLimit: 6,
+    featuredRepos: null,
+    techStack: null,
     theme: 'tokyonight',
     langs: null,
     fromFile: null,
@@ -54,6 +56,10 @@ function parseArgs(argv) {
       options.featuredStyle = args[++i];
     } else if (arg === '--featured-limit') {
       options.featuredLimit = parseInt(args[++i], 10);
+    } else if (arg === '--featured-repos') {
+      options.featuredRepos = args[++i].split(',').map(s => s.trim()).filter(Boolean);
+    } else if (arg === '--tech-stack') {
+      options.techStack = args[++i].split(',').map(s => s.trim()).filter(Boolean);
     } else if (arg === '--theme') {
       options.theme = args[++i];
     } else if (arg === '--langs') {
@@ -94,6 +100,8 @@ Options:
   --featured-sort <mode>  Sort featured projects by 'stars' or 'recent'
   --featured-style <mode> Featured project style: 'static', 'shields', or 'compact'
   --featured-limit <n>    Number of featured projects (0 hides the section)
+  --featured-repos <list> Comma-separated list of repository names to highlight
+  --tech-stack <list>     Comma-separated list of tech stack badges
   --theme <theme>         Stats card theme (default: tokyonight)
   --langs <list>          Comma-separated language codes for i18n (asked by the agent)
   --apply                 Apply a classification plan (requires --plan)
@@ -187,6 +195,8 @@ async function main() {
           featuredSort: options.featuredSort,
           featuredStyle: options.featuredStyle,
           featuredLimit: options.featuredLimit,
+          featuredRepos: options.featuredRepos,
+          techStack: options.techStack,
           theme: options.theme,
         });
         emitOutput(profile, outputDir, 'profile-readme.md', 'Profile README');

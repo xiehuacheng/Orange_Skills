@@ -81,7 +81,7 @@ After receiving the output, identify the most impactful improvements and ask the
 ### Generate Profile README
 
 ```bash
-node scripts/github-asset-manager.js profile [--user <username>] [--refresh] [--email <email>] [--featured-sort stars|recent] [--featured-style static|shields|compact] [--featured-limit <n>] [--theme <theme>]
+node scripts/github-asset-manager.js profile [--user <username>] [--refresh] [--email <email>] [--featured-sort stars|recent] [--featured-style static|shields|compact] [--featured-limit <n>] [--featured-repos <repo1,repo2,...>] [--tech-stack <tech1,tech2,...>] [--theme <theme>]
 ```
 
 Use this when the user wants to improve their GitHub profile page. The output is a complete README markdown suitable for the `username/username` repository.
@@ -97,7 +97,7 @@ Workflow:
 
 1. **Fetch the user's GitHub data** (profile, repositories, stars, activity).
 2. **Align each section with the user one by one** before generating the full README. Typical sections to review:
-   - **Tech Stack**: which tools/frameworks to highlight.
+   - **Tech Stack**: which tools/frameworks to highlight. Present the proposed list to the user and ask for confirmation or edits. Do not use the default stack without checking, because it may not match the user's actual focus.
    - **Featured Projects**: whether to include this section at all, how many repositories to show (`--featured-limit`), which specific repositories to include, and the sort order (`stars` or `recent`). Always confirm with the user before selecting projects; do not assume the top-N sorted list is what they want to highlight.
    - **Stats Cards**: theme choice and which cards to include.
    - **Contact / Social Links**: email, website, blog, LinkedIn, etc. (the skill can read some from the GitHub profile; ask the user to confirm or add missing ones).
@@ -114,6 +114,8 @@ When presenting each section, use tables or lists so the user can easily approve
 | `--featured-sort` | Sort featured projects by `stars` or `recent` | `stars` |
 | `--featured-style` | Render featured projects as `static` text, `shields` live badges (table), or `compact` list | `static` |
 | `--featured-limit` | Number of featured projects to display; `0` hides the section entirely | `6` |
+| `--featured-repos` | Comma-separated repository names to highlight (overrides sorting) | Top sorted repos |
+| `--tech-stack` | Comma-separated list of technologies for the Tech Stack badge row | Default list |
 | `--theme` | Theme for GitHub stats cards | `tokyonight` |
 
 ### Draft Repository Completion
@@ -291,6 +293,7 @@ If the user's intent is already specific (for example, "分类我的 GitHub Star
    - After the user confirms, help them apply metadata changes through the GitHub web UI or `gh` CLI. The `draft` command does not modify repositories automatically; only update metadata on the user's behalf if they explicitly ask.
 4. **Profile README workflow** (`profile`):
    - Align each section with the user one by one before generating.
+   - **Tech Stack**: present the proposed list of technologies and ask the user to confirm, add, or remove items. The default list is a starting point, not a final decision.
    - **Featured Projects**: explicitly confirm whether to include this section. GitHub already shows a "Popular repositories" panel on the profile, so this section is optional. If the user wants it, confirm how many repositories (`--featured-limit`) and which specific repositories to highlight. Do not auto-select projects without user approval.
    - Choose how featured projects display their star counts: `static` (snapshot at generation time), `shields` (live shields.io badges in a table), or `compact` (live badges in a minimal list).
    - Show the complete result to the user and discuss any final tweaks.

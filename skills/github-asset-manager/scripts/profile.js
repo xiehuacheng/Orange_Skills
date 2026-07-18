@@ -5,20 +5,66 @@ const { getSingle } = require('./api');
 
 const TEMPLATE_PATH = path.resolve(__dirname, '..', 'assets', 'profile-default.md');
 
+const DEFAULT_TECH_STACK = ['Python', 'Swift', 'JavaScript', 'PyTorch', 'LangChain', 'OpenAI', 'Obsidian', 'GitHub_Actions'];
+
+const TECH_STACK_COLORS = {
+  Python: '3776AB',
+  Swift: 'FA7343',
+  JavaScript: 'F7DF1E',
+  TypeScript: '3178C6',
+  PyTorch: 'EE4C2C',
+  LangChain: '1C3C3C',
+  OpenAI: '412991',
+  Obsidian: '483699',
+  'GitHub Actions': '2088FF',
+  GitHub_Actions: '2088FF',
+  React: '61DAFB',
+  Vue: '4FC08D',
+  Go: '00ADD8',
+  Rust: '000000',
+  Java: '007396',
+  'C++': '00599C',
+  C: 'A8B9CC',
+  HTML: 'E34F26',
+  CSS: '1572B6',
+  Shell: '89E051',
+  Docker: '2496ED',
+  Kubernetes: '326CE5',
+};
+
+function renderTechStack(items) {
+  const badges = items.map(tech => {
+    const color = TECH_STACK_COLORS[tech] || '6e7681';
+    const logo = tech.replace(/_/g, '');
+    const label = tech.replace(/_/g, ' ');
+    const logoColor = tech === 'JavaScript' ? 'black' : 'white';
+    return `  <img src="https://img.shields.io/badge/${encodeURIComponent(label)}-${color}?style=for-the-badge&logo=${encodeURIComponent(logo)}&logoColor=${logoColor}" alt="${label}" />`;
+  });
+  return `<p align="center">\n${badges.join('\n')}\n</p>`;
+}
+
 function renderFeaturedRepos(repos, options = {}) {
-  const { limit = 6, sort = 'stars', style = 'static' } = options;
+  const { limit = 6, sort = 'stars', style = 'static', only = null } = options;
 
   if (limit <= 0) return '';
 
-  const featured = repos
-    .filter(r => !r.fork && !r.private)
-    .sort((a, b) => {
+  let featured = repos.filter(r => !r.fork && !r.private);
+
+  if (Array.isArray(only) && only.length > 0) {
+    const order = new Map(only.map((name, idx) => [name, idx]));
+    featured = featured
+      .filter(r => order.has(r.name))
+      .sort((a, b) => order.get(a.name) - order.get(b.name));
+  } else {
+    featured = featured.sort((a, b) => {
       if (sort === 'recent') {
         return new Date(b.pushed_at) - new Date(a.pushed_at);
       }
       return b.stargazers_count - a.stargazers_count;
-    })
-    .slice(0, limit);
+    });
+  }
+
+  featured = featured.slice(0, limit);
 
   if (featured.length === 0) return 'No public repositories available.';
 
@@ -94,6 +140,8 @@ async function generateProfile(user, currentUser, options = {}) {
     featuredSort = 'stars',
     featuredStyle = 'static',
     featuredLimit = 6,
+    featuredRepos: featuredRepoNames = null,
+    techStack = DEFAULT_TECH_STACK,
     theme = 'tokyonight',
   } = options;
 
@@ -111,6 +159,7 @@ async function generateProfile(user, currentUser, options = {}) {
     sort: featuredSort,
     style: featuredStyle,
     limit: featuredLimit,
+    only: featuredRepoNames,
   });
 
   const template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
@@ -119,7 +168,8 @@ async function generateProfile(user, currentUser, options = {}) {
     .replace(/\{\{username\}\}/g, user)
     .replace(/\{\{name\}\}/g, profile.name || user)
     .replace(/\{\{theme\}\}/g, theme)
-    .replace('{{contacts}}', renderContacts(profile, { email }));
+    .replace('{{contacts}}', renderContacts(profile, { email }))
+    .replace('{{techStack}}', renderTechStack(techStack || DEFAULT_TECH_STACK));
 
   if (featuredRepos) {
     result = result.replace('{{featuredRepos}}', featuredRepos);
@@ -135,4 +185,5 @@ module.exports = {
   generateProfile,
   renderFeaturedRepos,
   renderContacts,
+  renderTechStack,
 };

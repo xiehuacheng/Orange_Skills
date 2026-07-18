@@ -8,6 +8,8 @@ const TEMPLATE_PATH = path.resolve(__dirname, '..', 'assets', 'profile-default.m
 function renderFeaturedRepos(repos, options = {}) {
   const { limit = 6, sort = 'stars', style = 'static' } = options;
 
+  if (limit <= 0) return '';
+
   const featured = repos
     .filter(r => !r.fork && !r.private)
     .sort((a, b) => {
@@ -91,6 +93,7 @@ async function generateProfile(user, currentUser, options = {}) {
     email = null,
     featuredSort = 'stars',
     featuredStyle = 'static',
+    featuredLimit = 6,
     theme = 'tokyonight',
   } = options;
 
@@ -104,14 +107,28 @@ async function generateProfile(user, currentUser, options = {}) {
     r => !r.private && r.owner.login === user && r.name !== profileRepoName
   );
 
+  const featuredRepos = renderFeaturedRepos(publicRepos, {
+    sort: featuredSort,
+    style: featuredStyle,
+    limit: featuredLimit,
+  });
+
   const template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
 
-  return template
+  let result = template
     .replace(/\{\{username\}\}/g, user)
     .replace(/\{\{name\}\}/g, profile.name || user)
     .replace(/\{\{theme\}\}/g, theme)
-    .replace('{{contacts}}', renderContacts(profile, { email }))
-    .replace('{{featuredRepos}}', renderFeaturedRepos(publicRepos, { sort: featuredSort, style: featuredStyle }));
+    .replace('{{contacts}}', renderContacts(profile, { email }));
+
+  if (featuredRepos) {
+    result = result.replace('{{featuredRepos}}', featuredRepos);
+  } else {
+    // Remove the entire Featured Projects section when no repositories are selected
+    result = result.replace(/## ⭐ Featured Projects\n\n\{\{featuredRepos\}\}\n\n---\n/, '');
+  }
+
+  return result;
 }
 
 module.exports = {

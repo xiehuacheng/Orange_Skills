@@ -22,6 +22,7 @@ function parseArgs(argv) {
     email: null,
     featuredSort: 'stars',
     featuredStyle: 'static',
+    featuredLimit: 6,
     theme: 'tokyonight',
     langs: null,
     fromFile: null,
@@ -51,6 +52,8 @@ function parseArgs(argv) {
       options.featuredSort = args[++i];
     } else if (arg === '--featured-style') {
       options.featuredStyle = args[++i];
+    } else if (arg === '--featured-limit') {
+      options.featuredLimit = parseInt(args[++i], 10);
     } else if (arg === '--theme') {
       options.theme = args[++i];
     } else if (arg === '--langs') {
@@ -90,6 +93,7 @@ Options:
   --email <email>         Contact email for profile README
   --featured-sort <mode>  Sort featured projects by 'stars' or 'recent'
   --featured-style <mode> Featured project style: 'static', 'shields', or 'compact'
+  --featured-limit <n>    Number of featured projects (0 hides the section)
   --theme <theme>         Stats card theme (default: tokyonight)
   --langs <list>          Comma-separated language codes for i18n (asked by the agent)
   --apply                 Apply a classification plan (requires --plan)
@@ -182,6 +186,7 @@ async function main() {
           email: options.email,
           featuredSort: options.featuredSort,
           featuredStyle: options.featuredStyle,
+          featuredLimit: options.featuredLimit,
           theme: options.theme,
         });
         emitOutput(profile, outputDir, 'profile-readme.md', 'Profile README');

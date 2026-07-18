@@ -1,4 +1,4 @@
-[English](./README.md) | [中文](./README.zh.md) | **日本語**
+[中文](./README.md) | [English](./README.en.md) | **日本語**
 
 # skills
 
@@ -75,6 +75,11 @@ npx skills add /path/to/skills@hot-skills
 ## ライセンス
 
 [MIT](./LICENSE)
+
+---
+
+
+> This README is a generated draft. Please review and edit it before applying to the repository.
 
 ---
 

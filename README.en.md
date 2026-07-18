@@ -1,17 +1,17 @@
-[English](./README.md) | **中文** | [日本語](./README.ja.md)
+[中文](./README.md) | **English** | [日本語](./README.ja.md)
 
 # skills
 
-> 由 xiehuacheng 维护的 JavaScript 项目。
+> A JavaScript project by xiehuacheng.
 
-## 目录
+## Table of Contents
 
-- [安装](#安装)
+- [Installation](#installation)
 - [Skill 介绍](#skill-介绍)
-- [贡献](#贡献)
-- [许可证](#许可证)
+- [Contributing](#contributing)
+- [License](#license)
 
-## 安装
+## Installation
 
 对 agent 说一句话即可安装：
 
@@ -68,11 +68,11 @@ npx skills add /path/to/skills@hot-skills
 
 它通过协作式头脑风暴帮助用户澄清 skill 的场景、触发时机和范围，提供命名与结构建议，并在每个关键节点停下来等用户确认。强调渐进式披露、人在回路中的决策，以及 skill 工作流中脚本优先通过 stdin/stdout 组合而非生成中间文件。
 
-## 贡献
+## Contributing
 
 欢迎提交新的 skill 或改进现有 skill。每个 skill 请单独放在 `skills/<skill-name>/` 目录下，并包含 `SKILL.md` 说明文件。
 
-## 许可证
+## License
 
 [MIT](./LICENSE)
 
@@ -81,4 +81,9 @@ npx skills add /path/to/skills@hot-skills
 
 > This README is a generated draft. Please review and edit it before applying to the repository.
 
-> 本 README 为自动生成的多语言草稿，正文保留了原始内容，章节标题已翻译。
+---
+
+
+> This README is a generated draft. Please review and edit it before applying to the repository.
+
+> This README is a generated multilingual draft. Original content is preserved; section headings are translated.

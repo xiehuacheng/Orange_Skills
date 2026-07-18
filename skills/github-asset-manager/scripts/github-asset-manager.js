@@ -89,7 +89,7 @@ Options:
   --from-file <path>      Read README from a local file for beautify/i18n
   --email <email>         Contact email for profile README
   --featured-sort <mode>  Sort featured projects by 'stars' or 'recent'
-  --featured-style <mode> Featured project style: 'static', 'shields', or 'pin'
+  --featured-style <mode> Featured project style: 'static', 'shields', or 'compact'
   --theme <theme>         Stats card theme (default: tokyonight)
   --langs <list>          Comma-separated language codes for i18n (asked by the agent)
   --apply                 Apply a classification plan (requires --plan)

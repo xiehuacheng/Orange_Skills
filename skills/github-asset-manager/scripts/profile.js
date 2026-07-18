@@ -21,29 +21,34 @@ function renderFeaturedRepos(repos, options = {}) {
   if (featured.length === 0) return 'No public repositories available.';
 
   if (style === 'shields') {
-    return featured
-      .map(r => {
-        const owner = encodeURIComponent(r.owner.login);
-        const repo = encodeURIComponent(r.name);
-        const starsBadge = `![Stars](https://img.shields.io/github/stars/${owner}/${repo}?style=flat&logo=github&color=facc15)`;
-        const lang = r.language
-          ? `![Language](https://img.shields.io/badge/-${encodeURIComponent(r.language)}-6e7681?style=flat)`
-          : '';
-        const desc = r.description || 'No description';
-        const badges = [starsBadge, lang].filter(Boolean).join(' ');
-        return `- **[${r.name}](${r.html_url})** ${badges}\n  ${desc}`;
-      })
-      .join('\n\n');
+    const rows = featured.map(r => {
+      const owner = encodeURIComponent(r.owner.login);
+      const repo = encodeURIComponent(r.name);
+      const starsBadge = `![Stars](https://img.shields.io/github/stars/${owner}/${repo}?style=flat-square&logo=github&color=8b949e)`;
+      const langCell = r.language || '-';
+      return `| **[${r.name}](${r.html_url})** | ${starsBadge} | ${langCell} |`;
+    });
+
+    return [
+      '| Repository | Stars | Language |',
+      '|------------|-------|----------|',
+      ...rows,
+      '',
+      '_Star counts update automatically via shields.io._',
+    ].join('\n');
   }
 
-  if (style === 'pin') {
+  if (style === 'compact') {
     return featured
       .map(r => {
         const owner = encodeURIComponent(r.owner.login);
         const repo = encodeURIComponent(r.name);
-        return `[![${r.name}](https://github-readme-stats.vercel.app/api/pin/?username=${owner}&repo=${repo}&theme=tokyonight)](${r.html_url})`;
+        const starsBadge = `![Stars](https://img.shields.io/github/stars/${owner}/${repo}?style=flat&logo=github&color=6e7681)`;
+        const lang = r.language ? `· ${r.language}` : '';
+        const desc = r.description || 'No description';
+        return `- **[${r.name}](${r.html_url})** ${lang}\n  ${starsBadge} · ${desc}`;
       })
-      .join('\n');
+      .join('\n\n');
   }
 
   return featured

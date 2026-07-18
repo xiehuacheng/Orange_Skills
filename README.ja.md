@@ -1,24 +1,17 @@
+[English](./README.md) | [中文](./README.zh.md) | **日本語**
+
 # skills
 
+> xiehuacheng の JavaScript プロジェクト。
 
-Agent Skills 技能集合，将各领域经验打包为可复用的 AI 能力 | A collection of Agent Skills that turn AI agents into reusable domain experts.
+## 目次
 
-
-![GitHub top language](https://img.shields.io/github/languages/top/xiehuacheng/skills) ![GitHub Repo stars](https://img.shields.io/github/stars/xiehuacheng/skills?style=social) ![GitHub forks](https://img.shields.io/github/forks/xiehuacheng/skills?style=social) ![GitHub License](https://img.shields.io/github/license/xiehuacheng/skills) ![GitHub Issues](https://img.shields.io/github/issues/xiehuacheng/skills) ![GitHub last commit](https://img.shields.io/github/last-commit/xiehuacheng/skills)
-
-
-## 目录
-
-- [安装方法](#安装方法)
+- [インストール](#インストール)
 - [Skill 介绍](#skill-介绍)
-  - [hot-skills](#hot-skills)
-  - [init-llm-wiki](#init-llm-wiki)
-  - [github-asset-manager](#github-asset-manager)
-  - [creating-skills](#creating-skills)
-- [贡献](#贡献)
-- [许可证](#许可证)
+- [貢献](#貢献)
+- [ライセンス](#ライセンス)
 
-## 安装方法
+## インストール
 
 对 agent 说一句话即可安装：
 
@@ -75,11 +68,11 @@ npx skills add /path/to/skills@hot-skills
 
 它通过协作式头脑风暴帮助用户澄清 skill 的场景、触发时机和范围，提供命名与结构建议，并在每个关键节点停下来等用户确认。强调渐进式披露、人在回路中的决策，以及 skill 工作流中脚本优先通过 stdin/stdout 组合而非生成中间文件。
 
-## 贡献
+## 貢献
 
 欢迎提交新的 skill 或改进现有 skill。每个 skill 请单独放在 `skills/<skill-name>/` 目录下，并包含 `SKILL.md` 说明文件。
 
-## 许可证
+## ライセンス
 
 [MIT](./LICENSE)
 
@@ -87,3 +80,5 @@ npx skills add /path/to/skills@hot-skills
 
 
 > This README is a generated draft. Please review and edit it before applying to the repository.
+
+> この README は自動生成された多言語ドラフトです。本文は元の内容を保持し、セクション見出しを翻訳しています。

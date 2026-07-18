@@ -1,24 +1,17 @@
+[English](./README.md) | **中文** | [日本語](./README.ja.md)
+
 # skills
 
-
-Agent Skills 技能集合，将各领域经验打包为可复用的 AI 能力 | A collection of Agent Skills that turn AI agents into reusable domain experts.
-
-
-![GitHub top language](https://img.shields.io/github/languages/top/xiehuacheng/skills) ![GitHub Repo stars](https://img.shields.io/github/stars/xiehuacheng/skills?style=social) ![GitHub forks](https://img.shields.io/github/forks/xiehuacheng/skills?style=social) ![GitHub License](https://img.shields.io/github/license/xiehuacheng/skills) ![GitHub Issues](https://img.shields.io/github/issues/xiehuacheng/skills) ![GitHub last commit](https://img.shields.io/github/last-commit/xiehuacheng/skills)
-
+> 由 xiehuacheng 维护的 JavaScript 项目。
 
 ## 目录
 
-- [安装方法](#安装方法)
+- [安装](#安装)
 - [Skill 介绍](#skill-介绍)
-  - [hot-skills](#hot-skills)
-  - [init-llm-wiki](#init-llm-wiki)
-  - [github-asset-manager](#github-asset-manager)
-  - [creating-skills](#creating-skills)
 - [贡献](#贡献)
 - [许可证](#许可证)
 
-## 安装方法
+## 安装
 
 对 agent 说一句话即可安装：
 
@@ -87,3 +80,5 @@ npx skills add /path/to/skills@hot-skills
 
 
 > This README is a generated draft. Please review and edit it before applying to the repository.
+
+> 本 README 为自动生成的多语言草稿，正文保留了原始内容，章节标题已翻译。

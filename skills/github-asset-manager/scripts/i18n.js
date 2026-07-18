@@ -426,7 +426,7 @@ function buildSwitcher(currentLang, primaryLang, langs) {
     if (lang === primaryLang) {
       targetPath = isPrimary ? './README.md' : '../README.md';
     } else {
-      targetPath = isPrimary ? `./i18n/README.${lang}.md` : `./README.${lang}.md`;
+      targetPath = isPrimary ? `./docs/README.${lang}.md` : `./README.${lang}.md`;
     }
 
     return report.link(label, targetPath);
@@ -560,7 +560,7 @@ async function generateI18n(repoFullName, options = {}) {
   const descriptions = [];
 
   for (const lang of langs) {
-    const filename = lang === primaryLang ? 'README.md' : `i18n/README.${lang}.md`;
+    const filename = lang === primaryLang ? 'README.md' : `docs/README.${lang}.md`;
     const content = buildReadme(repo, parsed, lang, primaryLang, langs);
     const text = makeOneLiner(repo, lang, lang === primaryLang, repo.description || parsed.description);
 

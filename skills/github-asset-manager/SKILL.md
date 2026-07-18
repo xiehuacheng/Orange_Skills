@@ -159,13 +159,13 @@ Workflow:
 1. Analyze the existing README and detect its source language. Present the detection to the user and ask them to confirm, for example: "你的 README 看起来是中文，对吗？".
 2. Ask the user which language should be the primary language for `README.md`.
 3. Ask the user which additional languages to generate. Supported language codes: `en`, `zh`, `ja`, `es`, `de`, `fr`.
-4. Explain that the additional language files will be placed in `i18n/README.<lang>.md`.
+4. Explain that the additional language files will be placed in `docs/README.<lang>.md`.
 5. Only after the user confirms the full language list, run the command with `--langs <primary>,<additional...>`.
 
 The command then generates:
 
 - `README.md` in the primary language.
-- `i18n/README.<lang>.md` for each additional requested language.
+- `docs/README.<lang>.md` for each additional requested language.
 - Each file includes a language switcher linking to the other translations.
 - A recommended description for the repository About section.
 
@@ -183,8 +183,19 @@ node scripts/github-asset-manager.js i18n --repo <owner/repo-name> --langs zh,en
 Output files (when `--output <dir>` is used):
 
 - `README.md`
-- `i18n/README.en.md`, `i18n/README.ja.md`, etc.
+- `docs/README.en.md`, `docs/README.ja.md`, etc.
 - `i18n-summary.md` — overview of generated files and the recommended description.
+
+> **Translation scope:** The `i18n` command currently translates **section headings only** and preserves the original body text unchanged. This gives you a working multilingual structure quickly, but it is not a full high-quality translation of the README content.
+>
+> For a complete, high-quality translation of the actual body content, follow this workflow:
+>
+> 1. Run the `i18n` command to generate the file structure (`README.md` and `docs/README.<lang>.md`).
+> 2. Spawn one sub-agent per target language.
+> 3. Have each sub-agent translate the body content of its assigned `docs/README.<lang>.md` while keeping the structure, badges, and language switcher intact.
+> 4. Write the translated files back to the same paths.
+>
+> Do not attempt to translate the body inline in a single pass; parallel sub-agents produce better results and are easier to review.
 
 ### Classify GitHub Stars into Lists
 

@@ -23,6 +23,7 @@ Use this checklist when reviewing or testing a skill before shipping it.
 - [ ] Write operations do not execute without explicit user approval.
 - [ ] Temporary files are cleaned up unless the user asked to keep them.
 - [ ] Cache behavior, if any, is documented and manually clearable.
+- [ ] After any `Write`, the agent reads back the first few lines to catch malformed headers or wrong line endings.
 
 ## Quality & Testing
 

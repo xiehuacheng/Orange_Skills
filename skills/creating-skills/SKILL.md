@@ -3,7 +3,7 @@ name: creating-skills
 description: Use when the user wants to create a new skill, write a SKILL.md, scaffold skill structure, improve an existing skill, or discuss skill design. Triggers on phrases like "create a skill", "new skill", "write a skill", "skill design", "validate skill", or when the user describes a reusable workflow, technique, or domain guide they want Kimi Code to learn.
 metadata:
   author: xiehuacheng
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Creating Skills
@@ -26,8 +26,6 @@ See `references/skill-standards.md` for a concrete example and writing guidance.
 
 ## Core Principles
 
-## Core Principles
-
 1. **Brainstorm Before Building** — explore through dialogue and challenge assumptions before designing.
 2. **Human Checkpoints** — never write files until scope, triggers, structure, and draft are approved.
 3. **Challenge the Plan Before Approving It** — name the weakest assumption and realistic failure modes before asking for approval.
@@ -44,6 +42,8 @@ Detailed guidance, examples, and question templates for each principle are in `r
 
 Follow these steps in order. Do not skip checkpoints.
 
+**Track progress with TodoList.** Create a todo list with the seven steps and update as you go.
+
 ### Step 1: Explore & Brainstorm
 
 Understand the user's intent through dialogue. Do not accept the first description at face value — ask the question that could change the entire design.
@@ -55,10 +55,13 @@ Identify:
 - Scope boundaries
 - Skill type: workflow, technique, reference, or tool integration
 - The weakest assumption in the user's request
+- The core tone or feel the skill should have — e.g., ask the user for help, expand its own capabilities, guard boundaries, coach the user
 
 If the request is large, propose decomposition before detailing anything.
 
-Before moving to Step 2, state the most fragile assumption and ask the user to confirm or correct it. Example: "You said 'focus skill'. My weakest assumption is that you mean a Pomodoro timer. If you actually mean 'prevent effort from drifting to low-return projects', the design changes completely. Which is it?"
+Before moving to Step 2, state the most fragile assumption and ask the user to confirm or correct it. See `references/core-principles.md` for question templates and examples.
+
+Also lock the core tone early — `ask-for-tools` feels different from `capability-sense`. If unclear, ask before naming.
 
 ### Step 2: Define Scope & Triggers
 
@@ -69,12 +72,9 @@ Summarize what the skill will and won't do. Draft the `description` field:
 - Do **not** summarize the workflow or process steps
 - Keep under 500 characters if possible; max 1024
 
-Before asking for approval, list 2-3 realistic ways the scope could fail or be misunderstood. Example:
+Before asking for approval, list 2-3 realistic ways the scope could fail or be misunderstood. See `references/core-principles.md` for examples.
 
-> Scope risks:
-> 1. "Focus" could mean time-blocking or direction-guarding. This skill assumes the latter.
-> 2. Users might expect the skill to block apps or notifications, which it cannot do.
-> 3. The drift judgment is agent-driven, which can be wrong for edge cases.
+**If the user says "include everything," push back.** Broad scopes need risk tiers. Propose a tiered approach and confirm.
 
 Present the scope, risks, and proposed description to the user. Wait for approval.
 
@@ -108,6 +108,8 @@ skill-name/
 
 Only include directories that are actually needed. Wait for user approval on location, name, structure, and resources.
 
+**If the user rejects all naming options, do not just produce another batch.** A rejected name usually means the core tone or scope is still misunderstood. Go back to Step 1 and ask one clarifying question about tone or intent before proposing names again.
+
 ### Step 4: Design Data Flow
 
 If the skill involves scripts:
@@ -134,12 +136,9 @@ Write the complete SKILL.md content in the conversation first. Include:
 
 Do **not** write it to disk yet.
 
-Before asking for approval, append a short "Remaining assumptions" section to the draft. List 1-3 things you are still assuming that, if wrong, would require redesign. Example:
+**Keep the draft concise.** Move dense examples and tables to `references/`; summarize them in the draft.
 
-> Remaining assumptions:
-> 1. The user wants automatic checks rather than manual triggers.
-> 2. The user accepts storing personal direction in `~/.config/<skill-name>/profile.md`.
-> 3. Moderate-drift intervention feels helpful rather than annoying.
+Before asking for approval, append a short "Remaining assumptions" section. List 1-3 assumptions that, if wrong, would require redesign. Every default behavior that could surprise the user should appear here. See `references/core-principles.md` for examples.
 
 Wait for user approval.
 
@@ -151,6 +150,8 @@ Once the draft is approved, use the location agreed upon in Step 3:
 2. Replace the generated `SKILL.md` with the approved draft
 3. Create or adapt `scripts/`, `references/`, `assets/` as needed
 4. Ensure scripts are executable and tested
+
+See `references/validation-checklist.md` for post-write verification steps.
 
 ### Step 7: Validate & Iterate
 

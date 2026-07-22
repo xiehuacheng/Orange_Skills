@@ -16,6 +16,9 @@ Concrete questions to explore:
 - "Are there frameworks, file types, or tools this skill should focus on?"
 - "When should this skill NOT be used?"
 - "What is the weakest assumption in what you just told me? If that assumption is wrong, what changes?"
+- "What tone should this skill have — should it ask the user for help, expand its own capabilities, guard boundaries, or coach the user?"
+
+**Fragile assumption example:** "You said 'focus skill'. My weakest assumption is that you mean a Pomodoro timer. If you actually mean 'prevent effort from drifting to low-return projects', the design changes completely. Which is it?"
 
 ## 2. Human Checkpoints
 
@@ -36,6 +39,15 @@ A plan that has not been attacked is not ready. Before asking for approval:
 - Ask one question that, if answered differently, would change the design.
 
 Only proceed when the user has either confirmed the assumption or changed the plan to remove it.
+
+**Scope risk example:**
+
+> Scope risks:
+> 1. "Focus" could mean time-blocking or direction-guarding. This skill assumes the latter.
+> 2. Users might expect the skill to block apps or notifications, which it cannot do.
+> 3. The drift judgment is agent-driven, which can be wrong for edge cases.
+
+**Broad scope pushback example:** "You said all tool types. Should API keys and system permissions require explicit approval every time, while CLI tools and packages are checked first and only asked about if missing?"
 
 ## 4. Standards-First Design
 
@@ -91,3 +103,12 @@ Include:
 - **Conversational patterns** — how to propose options, pause at decision points, confirm exact actions, and present results.
 
 Example pattern: instead of "Which languages do you want?", say "I detected the README is in Chinese. I recommend Chinese as primary plus English and Japanese. Does that work, or would you prefer a different set?"
+
+## Remaining Assumptions Example
+
+Use this format at the end of a draft before asking for approval:
+
+> Remaining assumptions:
+> 1. The user wants automatic checks rather than manual triggers.
+> 2. The user accepts storing personal direction in `~/.config/<skill-name>/profile.md`.
+> 3. If the user does not respond to a tool request, the agent defaults to downgrade rather than stop.

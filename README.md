@@ -10,6 +10,7 @@
 
 - [安装](#安装)
 - [Skill 介绍](#skill-介绍)
+  - [快速索引](#快速索引)
 - [贡献](#贡献)
 - [许可证](#许可证)
 
@@ -41,6 +42,22 @@ npx skills add /path/to/skills@hot-skills
 ```
 
 ## Skill 介绍
+
+### 快速索引
+
+| Skill | 一句话介绍 | 典型场景 |
+|-------|-----------|---------|
+| [`creating-skills`](./skills/creating-skills) | 创建、改进和验证 Agent Skill | 你想写一个新 skill |
+| [`hot-skills`](./skills/hot-skills) | 发现当前热门的 Agent Skills | 你想看看现在流行什么 skill |
+| [`skill-translator`](./skills/skill-translator) | 将 skill 的 `SKILL.md` 在中英文之间互译 | 你需要维护多语言 skill |
+| [`effort-audit`](./skills/effort-audit) | 检查当前任务是否偏离你的长期方向 | 你想确认这件事值不值得做 |
+| [`go-goal-go`](./skills/go-goal-go) | 帮你写出可验证的 `/goal` 目标 | 你要把多轮任务交给 agent 自动执行 |
+| [`ask-for-tools`](./skills/ask-for-tools) | 在 agent 遇到工具边界时主动索要工具 | agent 缺工具或权限时 |
+| [`github-asset-manager`](./skills/github-asset-manager) | 整理 GitHub Stars、仓库与 README | 管理你的 GitHub 数字资产 |
+| [`cv-builder`](./skills/cv-builder) | 从项目、GitHub、旧简历生成技术岗简历/CV | 你要写或更新简历 |
+| [`init-llm-wiki`](./skills/init-llm-wiki) | 初始化并维护 Karpathy 风格的 LLM Wiki | 你要为一个新领域建 wiki |
+
+下面按字母顺序给出每个 skill 的详细说明。
 
 ### hot-skills
 
@@ -87,6 +104,18 @@ npx skills add /path/to/skills@hot-skills
 [`ask-for-tools`](./skills/ask-for-tools) 用于在 agent 遇到工具边界时主动向用户索要工具，而不是蛮干。
 
 它在新任务开始或执行中卡住时触发，先自检工具是否已存在；若不存在，则向用户清晰说明原因、替代方案和"提供工具 / 尝试降级 / 停止任务"三个选项。适用于 MCP server、CLI 工具、Python/Node 包、API 密钥、系统权限和本地文件等场景。
+
+### go-goal-go
+
+[`go-goal-go`](./skills/go-goal-go) 用于帮助用户把模糊意图写成可验证的 `/goal` 目标。
+
+它会评估任务是否适合 goal 模式，在多轮、可重复、可验证的任务上主动建议 `/goal`，并与用户一起起草目标：终态、证明方式、边界、循环策略和停止规则。还可以在 goal plan 中显式声明循环里要使用的 skill 或系统工具。如果任务不适合 goal 模式，它会明确说明原因。
+
+### skill-translator
+
+[`skill-translator`](./skills/skill-translator) 用于将 skill 的 `SKILL.md` 在中英文之间互译。
+
+它从自然语言请求中解析目标 skill 和目标语言，自动检测源语言，翻译 `description` frontmatter 和正文，同时保留代码块、文件路径、命令名、技术标识符、URL 以及 `name` frontmatter 不变。翻译结果经 `scripts/quick_validate.py` 验证后，在用户确认才覆盖原文件。
 
 ## 贡献
 

@@ -1,112 +1,112 @@
 ---
 name: init-llm-wiki
-description: 根据指定领域，初始化并维护一个 Obsidian 优先、兼容 Google Cloud OKF 0.1 的 Karpathy 式 LLM Wiki。Use when the user wants to build or maintain a Karpathy-style LLM wiki for a new domain.
+description: Initialize and maintain an Obsidian-first, Google Cloud OKF 0.1–compatible Karpathy-style LLM Wiki for a given domain. Use when the user wants to build or maintain a Karpathy-style LLM wiki for a new domain.
 metadata:
   author: xiehuacheng
   version: "1.0.0"
 ---
 
-# 构建 LLM Wiki
+# Building an LLM Wiki
 
-帮助用户构建一个 Karpathy 风格的 LLM wiki，并遵循 Google Cloud Open Knowledge Format（OKF）v0.1 规范。
+Help the user build a Karpathy-style LLM wiki that follows the Google Cloud Open Knowledge Format (OKF) v0.1 specification.
 
-## 简介
+## Introduction
 
-这是一个通用 agent skill，用于为一个新领域（如一个技术栈、研究方向、产品领域）快速启动由 LLM 维护、人类策展的 wiki。
+This is a general-purpose agent skill for quickly bootstrapping an LLM-maintained, human-curated wiki for a new domain (such as a technology stack, research direction, or product area).
 
-它会帮你：
+It helps you:
 
-- 自动生成目录结构
-- 生成 `CLAUDE.md` / `AGENTS.md` schema 文档
-- 创建 `index.md`、`log.md`
-- 统一 frontmatter 和链接规范
+- Automatically generate the directory structure
+- Generate `CLAUDE.md` / `AGENTS.md` schema documents
+- Create `index.md`, `log.md`
+- Standardize frontmatter and linking conventions
 
-## 用途
+## Usage
 
-安装完成后，在支持的 agent 环境中输入（例如 Claude Code）：
+After installation, enter the following in a supported agent environment (e.g., Claude Code):
 
 ```text
 /init-llm-wiki
 ```
 
-Agent 会询问你想构建哪个领域的 wiki，然后自动完成初始化。
+The agent will ask which domain you want to build the wiki for, then complete the initialization automatically.
 
-## 生成的 Wiki 目录结构
+## Generated Wiki Directory Structure
 
 ```text
 wiki/
-├── 00-Raw/                 # 原始资料（Markdown + type: source）
-├── 01-Wiki/                # 知识点卡片
-├── 02-Areas/ 或 02-Module/ # 第二级分类
-│   └── <领域>/
-│       ├── index.md        # 领域落地页
-│       └── 子话题.md        # 成熟期拆分的子话题
-├── index.md                # 根目录，frontmatter 声明 okf_version: "0.1"
-└── log.md                  # 追加式更新日志
+├── 00-Raw/                 # Raw materials (Markdown + type: source)
+├── 01-Wiki/                # Knowledge cards
+├── 02-Areas/ or 02-Module/ # Second-level classification
+│   └── <domain>/
+│       ├── index.md        # Domain landing page
+│       └── subtopic.md     # Subtopics split out in the mature stage
+├── index.md                # Root; frontmatter declares okf_version: "0.1"
+└── log.md                  # Append-only update log
 ```
 
-## 核心约定
+## Core Conventions
 
-1. **Obsidian 优先**：内部链接统一使用 `[[知识点名称]]`，编辑已有页面时禁止改成标准 Markdown 链接。
-2. **OKF 兼容**：每个概念 `.md` 文件都包含 YAML frontmatter，且至少包含 `type` 字段；根 `index.md` 声明 `okf_version`。
-3. **保留 frontmatter**：不要删除或修改 `type`、`title`、`description`、`tags`、`aliases` 等字段，除非用户明确要求。
-4. **仅在对外导出 OKF 时**，才批量把 `[[...]]` 转换为 `[文本](路径.md)`，且需先征得用户同意。
+1. **Obsidian-first**: Use `[[Knowledge Point Name]]` uniformly for internal links; do not convert existing `[[...]]` links to standard Markdown links when editing pages.
+2. **OKF-compatible**: Every concept `.md` file must include YAML frontmatter with at least a `type` field; the root `index.md` declares `okf_version`.
+3. **Preserve frontmatter**: Do not delete or modify fields such as `type`, `title`, `description`, `tags`, or `aliases` unless the user explicitly requests it.
+4. **Only when exporting to OKF externally**: Batch-convert `[[...]]` to `[Text](path.md)`, and obtain user consent first.
 
-## 依赖（可选）
+## Dependencies (Optional)
 
-- [obsidian-skills](https://github.com/kepano/obsidian-skills)：Kepano 的 Obsidian 编辑 skill，安装后编辑体验更好，不安装也能正常使用。
+- [obsidian-skills](https://github.com/kepano/obsidian-skills): Kepano's Obsidian editing skill; editing works better after installation, but the wiki functions normally without it.
 
-## 相关资源
+## Related Resources
 
-- Karpathy LLM Wiki 原文：https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
-- OKF 规范：https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
+- Karpathy LLM Wiki original: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+- OKF specification: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
 
-## 执行流程
+## Execution Flow
 
-执行过程中，可将耗时的独立执行任务（如批量创建/更新卡片）交给 sub agent 并行处理；但 **Ingest 中的 takeaways 讨论和页面方案确认必须由主会话完成**，主会话负责任务拆分、结果整合与质量兜底。若 sub agent 失败或超时，主会话应及时接管，避免阻塞整体流程。
+During execution, time-consuming independent tasks (such as batch creating/updating cards) can be delegated to sub agents for parallel processing; however, **discussing Ingest takeaways and confirming page plans must be completed by the main session**, which is responsible for task decomposition, result integration, and quality assurance. If a sub agent fails or times out, the main session should take over promptly to avoid blocking the overall process.
 
-1. 如果用户还没有说明领域或主题，先问：**“你想构建关于哪个领域的 wiki？”**
-2. 参考 Karpathy 的 LLM Wiki 模式（https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f）和 OKF 规范（https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md）。
-3. **不要预填初始知识**，等待用户提供来源或明确指令。
-4. 如果项目还没有 git 仓库，请先初始化。
-5. 初始化时创建以下三个基础目录：
-   - `00-Raw/` —— 原始资料存放处，必须包含 `classified/` 与 `uncategorized/` 两个空子目录。**原始资料只读不改**，Agent 读取后不要在原文件上做任何修改。这两个子目录不需要放 `index.md`。
-   - `01-Wiki/` —— 主题卡片。
-   - `02-Areas/` 或 `02-Module/` —— 第二级分类目录，只创建这一层空目录；不要在其下再创建具体领域子文件夹。
-   
-   `02-*/` 下的具体子目录（如 `02-Module/数据结构/`、`02-Areas/AI工具/`）不要在初始化时创建。等用户提供资料并明确分类需求后，再询问用户是否需要创建、采用什么命名，然后根据用户确认创建。
-   
-   **注意**：本 skill 当前不定义 `03-Projects/` 或类似顶层应用目录。项目、实验、真题、案例等应用性内容如何组织，目前 intentionally 留白，待后续版本根据实际使用场景定义。
+1. If the user has not yet stated a domain or topic, ask first: **“Which domain do you want to build the wiki about?”**
+2. Refer to Karpathy's LLM Wiki pattern (https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) and the OKF specification (https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
+3. **Do not pre-fill initial knowledge**; wait for the user to provide sources or explicit instructions.
+4. If the project does not yet have a git repository, initialize one first.
+5. During initialization, create the following three base directories:
+   - `00-Raw/` — Storage for raw source materials; must contain two empty subdirectories: `classified/` and `uncategorized/`. **Raw materials are read-only and should not be modified**; the agent must not make any changes to the original files after reading them. These two subdirectories do not need an `index.md`.
+   - `01-Wiki/` — Topic cards.
+   - `02-Areas/` or `02-Module/` — Second-level classification directories; create only this empty layer. Do not create specific domain subfolders beneath it.
 
-## 目录结构演化
+   Do not create specific subdirectories under `02-*/` (such as `02-Module/数据结构/`, `02-Areas/AI工具/`) during initialization. Wait until the user provides materials and clarifies classification needs, then ask whether to create them, what naming to use, and create them only after user confirmation.
 
-本 skill 的目录层级不是一次性设计出来的，而是随 wiki 规模逐步生长的。管理 wiki 的 agent 必须理解 `02-Areas/`（或 `02-Module/`）在不同阶段的目标形态，避免过早分类（创建空文件夹）或过度扁平（把不该放在一起的页面硬塞进一个文件）。
+   **Note**: This skill currently does not define `03-Projects/` or similar top-level application directories. How to organize applied content such as projects, experiments, exam questions, and case studies is intentionally left open and will be defined in future versions based on real-world usage.
 
-判断的核心标准不是卡片数量，而是**内容是否已经自然分化出独立的组织单元**：如果一个领域的卡片可以用一段话 + 一个链接列表讲清楚，就不应该拆分子文件夹；如果一个领域的卡片已经需要分层导读、学习路径或子话题才能被理解，就应该升级结构。
+## Directory Structure Evolution
 
-### 02-Areas / 02-Module 的三阶段演化
+This skill's directory hierarchy is not designed all at once, but grows gradually with the wiki's scale. The agent managing the wiki must understand the target forms of `02-Areas/` (or `02-Module/`) at different stages, avoiding premature classification (creating empty folders) or excessive flattening (cramming pages that should not be together into a single file).
 
-`02-Areas/`（或 `02-Module/`）是**面向浏览与学习的视图层**，负责把 `01-Wiki/` 中零散的概念卡片聚合成可理解的领域地图。
+The core criterion is not the number of cards, but **whether the content has naturally differentiated into independent organizational units**: if a domain's cards can be explained clearly with one paragraph plus a list of links, it should not be split into subfolders; if a domain's cards already require layered guidance, learning paths, or subtopics to be understood, the structure should be upgraded.
 
-#### 阶段一：扁平索引（早期）
+### Three-Stage Evolution of 02-Areas / 02-Module
 
-当 wiki 规模较小，且每个领域的导语和链接都能在一个页面里清晰表达时，`02-Areas/` 应保持扁平：
+`02-Areas/` (or `02-Module/`) is the **browsing and learning view layer**, responsible for aggregating scattered concept cards from `01-Wiki/` into an understandable domain map.
+
+#### Stage One: Flat Index (Early)
+
+When the wiki is small and each domain's introduction and links can be clearly expressed in a single page, `02-Areas/` should remain flat:
 
 ```
 02-Areas/
 └── index.md
 ```
 
-`02-Areas/index.md` 的内容是按领域分组的导航与导读，每个领域写一段 100–300 字的导语 + 相关卡片链接即可。此时**不要为每个领域创建子文件夹**。
+`02-Areas/index.md` contains domain-grouped navigation and guidance; a 100–300 word introduction plus relevant card links for each domain is sufficient. At this stage, **do not create subfolders for each domain**.
 
-阶段一的典型特征：
-- 一个 `index.md` 就能概览所有领域
-- 每个领域的导语和链接列表在视觉上不拥挤
-- 领域之间的边界清晰，没有需要单独展开说明的子话题
+Typical characteristics of Stage One:
+- A single `index.md` can overview all domains.
+- Each domain's introduction and link list are not visually crowded.
+- Domain boundaries are clear, with no subtopics requiring separate elaboration.
 
-#### 阶段二：领域落地页（成长期）
+#### Stage Two: Domain Landing Page (Growth)
 
-当某个领域已经大到在 `02-Areas/index.md` 里用一段导语讲不清楚，或者需要独立的学习路径、模式梳理、决策表来辅助理解时，才为该领域创建子文件夹：
+Create a subfolder for a domain only when it has grown too large to explain with one introduction in `02-Areas/index.md`, or when it needs independent learning paths, pattern summaries, or decision tables to aid understanding:
 
 ```
 02-Areas/
@@ -115,137 +115,137 @@ wiki/
     └── index.md
 ```
 
-此时 `02-Areas/Agent 与 Claude Code/index.md` 不再只是链接列表，而应升级为**领域落地页**：
-- 这个领域解决什么问题
-- 推荐的学习/阅读路径
-- 核心模式或决策表
-- 与周边领域的关系
-- 最后附上相关卡片链接
+At this point, `02-Areas/Agent 与 Claude Code/index.md` is no longer just a list of links, but should be upgraded to a **domain landing page**:
+- What problem this domain solves
+- Recommended learning/reading path
+- Core patterns or decision tables
+- Relationship to neighboring domains
+- Finally, attach relevant card links
 
-进入阶段二的信号（满足任意一条即可考虑）：
-- 该领域的相关卡片在 `02-Areas/index.md` 中占据了过大篇幅，影响整体可读性
-- 该领域内部已经自然形成 2–3 个可命名的子话题
-- 该领域需要一段“入门路径”来帮助读者决定阅读顺序
-- 该领域与多个其他领域有交叉，需要一个独立页面来解释边界
+Signals for entering Stage Two (consider when any one is met):
+- The domain's related cards occupy too much space in `02-Areas/index.md`, affecting overall readability.
+- 2–3 nameable subtopics have naturally formed within the domain.
+- The domain needs an "entry path" to help readers decide reading order.
+- The domain intersects with multiple other domains and needs a standalone page to explain boundaries.
 
-注意：**不要仅为一个 index.md 创建子文件夹**。如果创建了一个子文件夹，就意味着预期该领域会继续生长到阶段三，或者当前已经需要独立落地页带来的额外结构。
+Note: **Do not create a subfolder just for one index.md**. Creating a subfolder implies that the domain is expected to continue growing into Stage Three, or that it already needs the additional structure of a standalone landing page.
 
-#### 阶段三：子领域聚合（成熟期）
+#### Stage Three: Subdomain Aggregation (Mature)
 
-当某个领域的知识继续增长，单个领域落地页已经装不下，需要拆分成子话题页面时，子文件夹内部应进一步拆分：
+When a domain's knowledge continues to grow and a single landing page can no longer contain it, requiring split into subtopic pages, the subfolder should be further divided:
 
 ```
 02-Areas/
 ├── index.md
 └── Agent 与 Claude Code/
-    ├── index.md              # 领域导读
-    ├── 模式与架构.md          # 子话题
-    └── 工具与生态.md          # 子话题
+    ├── index.md              # Domain guide
+    ├── 模式与架构.md          # Subtopic
+    └── 工具与生态.md          # Subtopic
 ```
 
-进入阶段三的信号（满足任意一条即可考虑）：
-- 领域落地页过长，需要滚动很久才能看完
-- 领域内部已经形成清晰、稳定的子话题，且每个子话题都值得独立成页
+Signals for entering Stage Three (consider when any one is met):
+- The domain landing page is too long and requires significant scrolling to read.
+- Clear, stable subtopics have formed within the domain, and each subtopic merits its own page.
 
-### 不应出现的结构
+### Structures to Avoid
 
-以下结构属于过度设计或过早分类，agent 应避免，并在 lint 时建议整改：
+The following structures are over-engineering or premature classification; the agent should avoid them and recommend fixes during lint:
 
-- `02-Areas/` 下每个子文件夹里只有一个 `index.md`，且该 index.md 只是链接列表
-- 为仅有几张卡片、一段导语就能讲清楚的领域创建独立子文件夹
-- 创建空文件夹“预留未来使用”
+- Each subfolder under `02-Areas/` contains only one `index.md`, and that `index.md` is just a list of links.
+- Creating standalone subfolders for domains that can be explained with just a few cards and one introduction.
+- Creating empty folders "reserved for future use".
 
-### 决策自检问题
+### Decision Self-Check Questions
 
-创建 `02-Areas/<领域>/` 子文件夹前，agent 应先回答：
+Before creating a `02-Areas/<domain>/` subfolder, the agent should answer:
 
-1. 这个领域在 `02-Areas/index.md` 里是否已经占用了过多篇幅，或和其他领域混在一起难以阅读？
-2. 这个领域是否需要除“导语 + 链接列表”之外的结构（如学习路径、模式对比、决策表）才能被理解？
-3. 创建子文件夹后，这个领域是否有明确的下一步生长方向（子话题），而不是只是为了把链接列表单独放一个地方？
+1. Does this domain already take up too much space in `02-Areas/index.md`, or is it mixed with other domains and hard to read?
+2. Does this domain need structure beyond "introduction + link list" (such as learning paths, pattern comparisons, decision tables) to be understood?
+3. After creating the subfolder, does this domain have a clear next growth direction (subtopics), rather than just being a place to put the link list separately?
 
-如果三个问题都为“是”，则创建子文件夹；否则继续在 `02-Areas/index.md` 中用段落表达。
+If the answer to all three questions is "yes", create the subfolder; otherwise, continue expressing it as a paragraph in `02-Areas/index.md`.
 
-### 关于应用性内容
+### About Applied Content
 
-项目、实验、真题、案例等应用性内容目前不在本 skill 的定义范围内。后续版本将根据实际使用场景决定是否引入 `03-Projects/` 或把应用内容下沉到 `02-Areas/<领域>/` 下。当前 agent 不应主动创建任何应用目录。
+Applied content such as projects, experiments, exam questions, and case studies is currently outside the scope of this skill. Future versions will decide whether to introduce `03-Projects/` or sink applied content under `02-Areas/<domain>/` based on real-world usage. The current agent should not proactively create any application directories.
 
-6. 创建第一版 agent schema 文档（例如 Claude Code 用 `CLAUDE.md`，Codex / OpenCode 等用 `AGENTS.md`），并同时创建 `WORKFLOWS.md` 作为工作流程手册。可参考本 skill 目录下的 `templates/WORKFLOWS.md` 模板。其中需包含：
-   - Karpathy 原文中提到的 Wiki 内容类型
-   - OKF 要求的 `type` 字段及取值规范
-   - 根目录 `index.md` 和 `log.md` 的角色与格式
-   - 文件命名、链接、frontmatter 的使用规则
-   - 核心工作流程：Ingest、Query、Lint 的**明确职责分界**、触发条件与执行步骤
-   - 扫描版/非文本资料的处理方式（如有）
-7. 创建**根目录** `index.md`，frontmatter 中写入 `okf_version: "0.1"`，正文列出 wiki 目录入口。注意：`00-Raw/` 不要作为 `[[00-Raw]]` 的 wikilink 目标，因为 raw 目录不需要 `index.md`；写成纯文本说明即可。其他目录链接使用 Obsidian 风格 `[[标题]]` 或 OKF 风格 `[标题](相对路径)`。
-8. 创建 `log.md`，日期标题使用 ISO 8601 格式 `YYYY-MM-DD`，并写入初始化记录。
-9. 可选项：如果用户需要，再询问是否为其创建一个 HTML 看板来展示 wiki 状态。
+6. Create the first version of the agent schema document (e.g., `CLAUDE.md` for Claude Code, `AGENTS.md` for Codex / OpenCode), and simultaneously create `WORKFLOWS.md` as a workflow manual. You can refer to the `templates/WORKFLOWS.md` template in this skill's directory. It should include:
+   - Wiki content types mentioned in the original Karpathy article
+   - The `type` field required by OKF and its value conventions
+   - The roles and formats of the root `index.md` and `log.md`
+   - Rules for file naming, links, and frontmatter usage
+   - Core workflows: clear responsibility boundaries, trigger conditions, and execution steps for Ingest, Query, and Lint
+   - Handling of scanned/non-text materials (if any)
+7. Create the **root** `index.md`, with `okf_version: "0.1"` in the frontmatter, and list wiki directory entries in the body. Note: `00-Raw/` should not be the target of a `[[00-Raw]]` wikilink, because the raw directory does not need an `index.md`; write it as plain text instead. Links to other directories should use Obsidian-style `[[Title]]` or OKF-style `[Title](relative-path)`.
+8. Create `log.md`, using ISO 8601 `YYYY-MM-DD` format for date headings, and write the initialization record.
+9. Optional: If the user wants, ask whether to create an HTML dashboard to display the wiki status.
 
-## Ingest 强制流程（必须先讨论，后写入）
+## Mandatory Ingest Flow (Discuss First, Write After)
 
-为了贴近 Karpathy 原版的 LLM Wiki 思想，Ingest 不是“把资料丢进去就自动生成卡片”的批处理任务，而是一个**人机协作的策展过程**。执行 Ingest 时，主会话必须先完成以下两个阶段，再决定是否使用 sub agent 并行创建卡片：
+To stay close to the spirit of Karpathy's original LLM Wiki, Ingest is not a batch task that "throws materials in and automatically generates cards", but a **human-machine collaborative curation process**. When executing Ingest, the main session must first complete the following two phases before deciding whether to use sub agents to create cards in parallel:
 
-### 阶段一：讨论关键收获（Key Takeaways）
+### Phase One: Discuss Key Takeaways
 
-这一步必须先做，不能跳过。重点是**内容层面的对话**，而不是直接规划写哪些页面。
+This step must be done first and cannot be skipped. The focus is **content-level conversation**, not directly planning which pages to write.
 
-1. **读取所有待处理的原始资料**。
-2. **按来源提炼关键收获**：为每个资料用 1–2 句话概括其主旨，然后列出核心论点、关键概念、重要数据、与已有 wiki 的冲突或补充、作者的限制/假设等。不预设数量，按实际内容列出。
-3. **把关键收获展示给用户，并展开讨论**：
-   - 这些资料主要说了什么？
-   - 哪些观点最有价值？
-   - 哪些和已有知识矛盾或需要更新？
-   - 用户有没有想补充、质疑或特别强调的地方？
-4. **根据用户反馈调整收获重点**。
+1. **Read all raw materials awaiting processing**.
+2. **Extract key takeaways by source**: Summarize each source in 1–2 sentences, then list core arguments, key concepts, important data, conflicts with or additions to existing wiki content, author limitations/assumptions, etc. Do not preset quantities; list according to actual content.
+3. **Present the key takeaways to the user and discuss them**:
+   - What do these materials mainly say?
+   - Which points are most valuable?
+   - Which conflict with existing knowledge or need updating?
+   - Does the user have anything to add, question, or especially emphasize?
+4. **Adjust takeaway priorities based on user feedback**.
 
-### 阶段二：基于收获规划页面方案
+### Phase Two: Plan Page Schemes Based on Takeaways
 
-在确认关键收获之后，才把讨论结果转化为具体的 wiki 写入方案。
+Only after confirming the key takeaways should the discussion results be translated into a concrete wiki writing plan.
 
-1. **基于已确认的关键收获，提出“本次处理清单”**：
-   - 新增的概念/实体卡
-   - 需要更新的已有页面
-   - 可能值得创建的对比/算法页面
-   - 建议合并或明确边界的重叠主题
-   - 暂时不值得单独成卡、但可以在已有页面中提及的内容
-2. **向用户展示处理清单并等待确认**：让用户看到将要写什么、改什么、合并什么，询问是否有要调整、补充、跳过或合并的项。
-3. **用户确认后，才使用 sub agent 并行创建/更新具体卡片**。
-4. **sub agent 完成后，主会话执行去重与边界澄清**，更新 `index.md`、相关概览和 `log.md`。
+1. **Based on the confirmed key takeaways, propose a "Processing List for This Round"**:
+   - New concept/entity cards
+   - Existing pages that need updating
+   - Comparison/algorithm pages that may be worth creating
+   - Overlapping topics suggested for merging or boundary clarification
+   - Content not yet worth a standalone card but mentionable in existing pages
+2. **Show the processing list to the user and wait for confirmation**: Let the user see what will be written, changed, or merged, and ask whether any items need adjustment, addition, skipping, or merging.
+3. **Only after user confirmation should sub agents be used to create/update specific cards in parallel**.
+4. **After sub agents complete, the main session performs deduplication and boundary clarification**, updating `index.md`, relevant overviews, and `log.md`.
 
-如果 sub agent 失败或超时，主会话应接管并手动完成对应卡片，避免阻塞流程。详见 `WORKFLOWS.md` 的 Ingest 流程。
+If a sub agent fails or times out, the main session should take over and manually complete the corresponding cards to avoid blocking the process. See the Ingest flow in `WORKFLOWS.md` for details.
 
-## 升级与迁移
+## Upgrades and Migration
 
-当 `init-llm-wiki` skill 本身有重大更新（如 Ingest 流程调整、目录约定变化）时，已经用旧版 skill 初始化的 wiki 项目不会自动更新。主会话应：
+When the `init-llm-wiki` skill itself has a major update (such as Ingest flow adjustments or directory convention changes), wiki projects initialized with the old version will not update automatically. The main session should:
 
-1. **同步 `WORKFLOWS.md`**：将项目根目录的 `WORKFLOWS.md` 与当前 skill 模板对齐。这是项目级文件，skill 更新不会自动覆盖。
-2. **同步 `CLAUDE.md` / `AGENTS.md`**：把 schema 文档中的过时约定（如目录结构、frontmatter 规则、工作流程）更新到最新版本。
-3. **清理过时结构**：例如旧版可能创建了 `00-Raw/index.md`、`00-Raw/classified/index.md`、`00-Raw/uncategorized/index.md` 等，新版已明确这些目录不需要 `index.md`，应删除。
-4. **更新根 `index.md`**：如果旧版链接了不应再存在的页面或目录（如 `[[00-Raw]]`），应移除或改为纯文本说明。
-5. **在 `log.md` 中记录迁移**：说明本次迁移的原因和变更内容。
+1. **Sync `WORKFLOWS.md`**: Align the project's root `WORKFLOWS.md` with the current skill template. This is a project-level file and is not automatically overwritten by skill updates.
+2. **Sync `CLAUDE.md` / `AGENTS.md`**: Update outdated conventions in the schema documents (such as directory structure, frontmatter rules, and workflows) to the latest version.
+3. **Clean up outdated structures**: For example, the old version may have created `00-Raw/index.md`, `00-Raw/classified/index.md`, `00-Raw/uncategorized/index.md`, etc. The new version clarifies that these directories do not need `index.md` and they should be deleted.
+4. **Update the root `index.md`**: If the old version linked to pages or directories that should no longer exist (such as `[[00-Raw]]`), remove or change them to plain text descriptions.
+5. **Record the migration in `log.md`**: Explain the reasons for this migration and what changed.
 
-完成迁移后，再按新版流程继续 Ingest / Query / Lint。
+After completing the migration, continue Ingest / Query / Lint according to the new process.
 
-## 必须遵守的 OKF 约定
+## OKF Conventions That Must Be Followed
 
-- 每个概念 `.md` 文件都必须包含可解析的 YAML frontmatter，且至少有一个非空的 `type` 字段。
-- 建议的 frontmatter 字段包括：`title`、`description`、`resource`、`tags`、`timestamp`（ISO 8601）。
-- 允许自定义扩展字段；消费工具应保留不认识的键，不能因此拒绝文档。
-- **只有根目录的 `index.md`** 可以包含 frontmatter，且仅用于声明 `okf_version`；子目录中的 `index.md` 和任何 `log.md` 都不得包含 frontmatter。
-- **子目录 `index.md` 的角色**：允许作为该目录的导航/概览页存在，但不是必须的；如果存在，只能包含目录说明和页面链接，不能包含 frontmatter，也不应被当作概念页面。
-- 知识图谱优先使用 Obsidian 双向链接（`[[文本]]`）。如需与严格 OKF 工具交换，可在 lint/export 阶段转换为标准 Markdown 链接（`[文本](路径)`）。
-- 概念身份等于文件在包内的路径去掉 `.md` 后缀。
-- 断链是允许的，不能视为格式错误。
+- Every concept `.md` file must contain parseable YAML frontmatter with at least one non-empty `type` field.
+- Recommended frontmatter fields include: `title`, `description`, `resource`, `tags`, `timestamp` (ISO 8601).
+- Custom extension fields are allowed; consuming tools should preserve unrecognized keys and must not reject documents because of them.
+- **Only the root `index.md`** may contain frontmatter, and only to declare `okf_version`; `index.md` files in subdirectories and any `log.md` must not contain frontmatter.
+- **Role of subdirectory `index.md`**: It may exist as a navigation/overview page for that directory, but is not required; if it exists, it can only contain directory description and page links, must not contain frontmatter, and should not be treated as a concept page.
+- Knowledge graphs should prefer Obsidian bidirectional links (`[[text]]`). If exchange with strict OKF tools is needed, convert to standard Markdown links (`[text](path)`) at the lint/export stage.
+- Concept identity equals the file's path within the package with the `.md` extension removed.
+- Broken links are allowed and should not be treated as formatting errors.
 
-## Obsidian 格式保留规则
+## Obsidian Format Preservation Rules
 
-- **优先且保留 `[[wikilink]]`**：新建内部链接时用 `[[知识点名称]]`；编辑已有页面时，禁止把现有的 `[[...]]` 转成 `[...](...)`。
-- **外部链接用标准 Markdown**：如 `[来源](https://example.com)`。
-- **保留 YAML frontmatter**：不要删除或修改 `type`、`title`、`description`、`tags`、`aliases`、`cssclasses` 等字段，除非用户明确要求。
-- **保留文件命名习惯**：继续使用中文知识点名称作为文件名，例如 `二叉树.md`，不要改成 slug。
-- **防止双后缀**：概念 `.md` 文件不得以 `.md` 结尾再加 `.md`（禁止 `CLAUDE.md.md`、`index.md.md`、`log.md.md`）。若概念名本身含 `.md`（如 `CLAUDE.md`），应命名为 `CLAUDE.md 配置文件.md` 或 `CLAUDE.md 项目规范.md`。
-- **仅在明确需要对外导出 OKF 时**，才批量把 `[[...]]` 转换为标准 Markdown 链接；转换前需告知用户并征得同意。
+- **Prefer and preserve `[[wikilink]]`**: Use `[[Knowledge Point Name]]` for new internal links; when editing existing pages, do not convert existing `[[...]]` to `[...](...)`.
+- **External links use standard Markdown**: e.g., `[Source](https://example.com)`.
+- **Preserve YAML frontmatter**: Do not delete or modify fields such as `type`, `title`, `description`, `tags`, `aliases`, `cssclasses`, unless the user explicitly requests it.
+- **Preserve file naming conventions**: Continue using Chinese knowledge point names as filenames, e.g., `二叉树.md`; do not change them to slugs.
+- **Prevent double suffixes**: Concept `.md` files must not end with `.md` followed by another `.md` (forbidden: `CLAUDE.md.md`, `index.md.md`, `log.md.md`). If the concept name itself contains `.md` (e.g., `CLAUDE.md`), name it `CLAUDE.md 配置文件.md` or `CLAUDE.md 项目规范.md`.
+- **Only when explicitly exporting to OKF externally**: Batch-convert `[[...]]` to standard Markdown links; inform the user and obtain consent before conversion.
 
-## 其他注意事项
+## Other Notes
 
-- 有不确定的地方请向用户提问。
-- 如果需要更好的 Obsidian 编辑支持，可在项目级别安装 kepano 的 `obsidian-skills`，安装完后请用户重启 agent 再继续；不安装也能正常使用。
+- Ask the user when unsure.
+- If better Obsidian editing support is needed, install kepano's `obsidian-skills` at the project level; after installation, ask the user to restart the agent before continuing; it works normally without installation.

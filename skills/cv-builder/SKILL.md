@@ -1,128 +1,128 @@
 ---
 name: cv-builder
-description: "Use when the user wants to build a tech resume or CV. 从本地项目、GitHub 仓库、旧简历文件或纯文本中生成程序员/技术岗简历或 CV。触发语：帮我写份简历、根据这些项目生成简历、把 GitHub 项目整理成简历、优化一下我的简历、生成技术岗简历 PDF。"
+description: "Use when the user wants to build a tech resume or CV. Generate a programmer/technical resume or CV from local projects, GitHub repositories, old resume files, or plain text. Trigger phrases: help me write a resume, generate a resume from these projects, organize GitHub projects into a resume, polish my resume, generate a technical resume PDF."
 ---
 
 # CV Builder
 
-## 概述
+## Overview
 
-把分散的开发者经历——本地项目、GitHub 仓库、旧简历文件或纯文本笔记——转换成一份精致、可直接投递的简历或 CV。本 skill 扮演技术招聘人员的角色：并行读取来源材料、针对性追问、用 Markdown 起草内容，并通过可定制模板渲染为 HTML/PDF。
+Turn scattered developer experience — local projects, GitHub repositories, old resume files, or plain-text notes — into a polished, ready-to-submit resume or CV. This skill acts as a technical recruiter: read source materials in parallel, ask targeted follow-up questions, draft content in Markdown, and render it to HTML/PDF via customizable templates.
 
-## 何时使用
+## When to Use
 
-当用户想要：
+Use when the user wants to:
 
-- 从零创建新简历或 CV
-- 将 GitHub 项目或本地代码库转成简历要点
-- 更新或重新排版现有简历/CV
-- 生成特定视觉风格的 PDF 简历
-- 为特定岗位或行业定制简历
+- Create a new resume or CV from scratch
+- Turn GitHub projects or local codebases into resume bullet points
+- Update or reformat an existing resume/CV
+- Generate a PDF resume with a specific visual style
+- Tailor a resume for a specific role or industry
 
-## 何时不使用
+## When Not to Use
 
-不要用于：
+Do not use for:
 
-- 写求职信或申请邮件
-- 向招聘网站或公司门户投递简历
-- 核实工作经历或项目声明的真实性
-- 保证 ATS 兼容性或面试回复
-- 除非用户明确提供全部内容，否则不用于非技术岗简历
+- Writing cover letters or application emails
+- Submitting resumes to job boards or company portals
+- Verifying the truthfulness of work history or project claims
+- Guaranteeing ATS compatibility or interview responses
+- Non-technical resumes unless the user explicitly provides all content
 
-## 核心流程
+## Core Workflow
 
-按以下顺序执行。在需要用户做选择的交互阶段，**使用当前 Agent 提供的结构化提问/交互能力**（如多选、单选、确认框），避免在聊天中输出大段文字问题。
+Execute the following steps in order. During interactive phases where the user must make choices, **use the structured question/interaction capabilities provided by the current Agent** (e.g., multiple choice, single choice, confirmation boxes) instead of dumping large blocks of text questions into the chat.
 
-### 步骤 1：收集输入来源
+### Step 1: Collect Input Sources
 
-询问用户有哪些材料。支持任意组合：
+Ask the user what materials they have. Any combination is supported:
 
-| 来源 | 处理方式 |
-|------|----------|
-| 本地项目文件夹 | 读取 README、package.json、pyproject.toml、源码摘要 |
-| GitHub 仓库 URL | 获取仓库元数据和 README |
-| 现有简历文件（PDF/DOCX/MD） | 提取文本；macOS 上 DOCX 用 `textutil -convert txt` |
-| 纯文本或笔记 | 直接接受 |
-| LinkedIn / Notion / 作品集 URL | 能抓取则抓取，否则请用户导出 |
+| Source | Handling |
+|--------|----------|
+| Local project folder | Read README, package.json, pyproject.toml, and source-code summaries |
+| GitHub repository URL | Fetch repository metadata and README |
+| Existing resume file (PDF/DOCX/MD) | Extract text; on macOS, use `textutil -convert txt` for DOCX |
+| Plain text or notes | Accept as-is |
+| LinkedIn / Notion / portfolio URL | Scrape if possible; otherwise ask the user to export |
 
-在用户提供完所有材料前，不要开始生成内容。
+Do not start generating content until the user has provided all materials.
 
-### 步骤 2：分派 sub agent 读取材料
+### Step 2: Dispatch Sub Agents to Read Materials
 
-主 agent 根据项目大小决定分派策略：
+The main agent decides the dispatch strategy based on project size:
 
-- **大项目**（文件多、代码复杂）：单独分配一个 sub agent
-- **小项目或简单文件**：合并到一个 sub agent
-- **旧简历 / 文本笔记**：一个 sub agent
+- **Large projects** (many files, complex code): assign a dedicated sub agent
+- **Small projects or simple files**: combine into one sub agent
+- **Old resume / text notes**: one sub agent
 
-每个 sub agent 返回简洁摘要，包括：
+Each sub agent returns a concise summary including:
 
-- 项目/文件目的
-- 使用的关键技术
-- 显著功能或成果
-- 可量化的影响（如有）
-- 建议的简历要点
+- Project/file purpose
+- Key technologies used
+- Notable features or achievements
+- Quantifiable impact (if any)
+- Suggested resume bullet points
 
-### 步骤 3：询问个人信息
+### Step 3: Ask for Personal Information
 
-通过结构化交互分组确认或收集：
+Confirm or collect the following through structured interactions, grouped by topic:
 
-1. **基础信息**：姓名、邮箱、电话、所在地、LinkedIn、GitHub
-2. **求职目标**：目标岗位、行业、城市
-3. **经历与技能**：教育背景、工作经历、项目经历、技术栈
-4. **加分项**：证书、语言、奖项、开源贡献
-5. **照片（可选）**：是否提供证件照，放在简历右上角
+1. **Basic info**: name, email, phone, location, LinkedIn, GitHub
+2. **Career goal**: target role, industry, city
+3. **Experience and skills**: education, work experience, projects, tech stack
+4. **Bonus items**: certifications, languages, awards, open-source contributions
+5. **Photo (optional)**: whether to provide an ID photo and place it in the top-right corner of the resume
 
-用来源摘要预填答案，让用户修改或补充。
+Pre-fill answers using the source summaries and let the user edit or add details.
 
-### 步骤 4：起草 Markdown 简历
+### Step 4: Draft the Markdown Resume
 
-生成 Markdown 格式简历，要求：
+Generate a Markdown resume that:
 
-- 结构清晰、ATS 友好
-- 包含目标岗位关键词
-- 要点简洁（尽量使用 STAR 法则）
-- 技能部分与目标岗位匹配
+- Has a clear, ATS-friendly structure
+- Includes keywords for the target role
+- Uses concise bullet points (preferably STAR method)
+- Matches skills to the target role
 
-把草稿展示给用户，请其编辑。重复直到用户认可内容。
+Show the draft to the user and ask them to edit it. Repeat until the user approves the content.
 
-### 步骤 5：选择模板
+### Step 5: Choose a Template
 
-通过结构化交互询问用户想要的风格：
+Ask the user for their preferred style through structured interactions:
 
-- **内置模板**：modern（现代单栏）、classic（经典双栏）、minimal（极简）
-- **用户提供模板**：接受 HTML/CSS 文件路径
-- **Agent 设计**：用户描述风格，agent 生成 HTML/CSS
+- **Built-in templates**: modern (modern single-column), classic (classic two-column), minimal (minimal)
+- **User-provided template**: accept an HTML/CSS file path
+- **Agent-designed**: user describes the style, and the agent generates HTML/CSS
 
-渲染 HTML 预览并展示给用户。
+Render an HTML preview and show it to the user.
 
-### 步骤 6：确认页面与版式
+### Step 6: Confirm Page Layout
 
-通过结构化交互询问用户版式偏好：
+Ask the user about layout preferences through structured interactions:
 
-- **页数**：是否压缩到一页，还是允许多页？
-- **照片**：是否提供证件照并放在简历右上角？
-- **其他调整**：是否需要调整字号、行距、页边距等？
+- **Page count**: squeeze to one page or allow multiple pages?
+- **Photo**: provide an ID photo and place it in the top-right corner?
+- **Other adjustments**: font size, line spacing, margins, etc.?
 
-根据用户选择，agent 修改 HTML/CSS 并重新渲染预览。若用户选择压缩到一页，使用 `build_resume.py --one-page` 生成紧凑版式。
+Modify the HTML/CSS and re-render the preview based on the user's choices. If the user chooses one page, use `build_resume.py --one-page` to generate a compact layout.
 
-### 步骤 7：生成 PDF
+### Step 7: Generate the PDF
 
-用 WeasyPrint 将 HTML 预览转换为 PDF。
+Convert the HTML preview to PDF using WeasyPrint.
 
-依赖处理：
+Dependency handling:
 
-1. 检查 skill 目录下是否有专用的 `uv` 虚拟环境且已安装 WeasyPrint
-2. 若无，创建环境并执行 `uv pip install weasyprint`
-3. 若自动安装失败，输出 HTML 预览并提供手动安装命令
+1. Check whether a dedicated `uv` virtual environment exists in the skill directory and whether WeasyPrint is installed
+2. If not, create the environment and run `uv pip install weasyprint`
+3. If automatic installation fails, output the HTML preview and provide manual installation instructions
 
-配合用户迭代调整版式、内容和模板，直到满意。
+Iterate with the user on layout, content, and template until satisfied.
 
-## 资源
+## Resources
 
-- `scripts/build_resume.py` — 主流程入口（支持 `--one-page` 压缩版式）
-- `scripts/render_pdf.py` — HTML 转 PDF（WeasyPrint，macOS 自动注入 Hiragino Sans GB 字体）
-- `scripts/ensure_weasyprint.py` — 管理 `uv` 环境
-- `scripts/read_project.py` — 扫描本地项目关键文件
-- `assets/templates/` — 内置 HTML/CSS 模板
-- `references/example-resume.md` — Markdown 简历格式示例
+- `scripts/build_resume.py` — main entry point (supports `--one-page` compact layout)
+- `scripts/render_pdf.py` — HTML to PDF (WeasyPrint, auto-injects Hiragino Sans GB font on macOS)
+- `scripts/ensure_weasyprint.py` — manages the `uv` environment
+- `scripts/read_project.py` — scans key files in local projects
+- `assets/templates/` — built-in HTML/CSS templates
+- `references/example-resume.md` — example Markdown resume format

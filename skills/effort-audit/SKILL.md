@@ -1,51 +1,51 @@
 ---
 name: effort-audit
-description: Use when 新项目对话开始，或用户说"我有没有偏""检查方向""这值得做吗""audit this"时。自动读取 ~/.config/effort-audit/profile.md 并判断当前任务是否偏离用户的长期方向，在偏离达到中度或以上时暂停并提醒。
+description: Use when a new project conversation starts, or when the user says "am I drifting?", "check direction", "is this worth it?", or "audit this". Automatically reads ~/.config/effort-audit/profile.md and determines whether the current task deviates from the user's long-term direction; pauses and alerts when deviation reaches moderate or above.
 metadata:
   author: xiehuacheng
   version: "1.0.0"
 ---
 
-# Effort Audit（投入审计）
+# Effort Audit
 
-根据持久化的个人方向配置，自动判断用户当前投入的任务是否值得继续。
+Automatically determines whether the user's current effort is worth continuing, based on a persisted personal direction configuration.
 
-**能做什么：**
-- 在项目对话开始时自动读取 `~/.config/effort-audit/profile.md`。
-- 静默评估当前项目或任务是否与既定方向一致。
-- 在偏离达到中度或以上时列出具体原因并介入。
-- 在继续前请用户确认、暂停或调整方向。
-- 当用户方向变化时协助更新配置。
+**What it can do:**
+- Automatically read `~/.config/effort-audit/profile.md` at the start of a project conversation.
+- Silently evaluate whether the current project or task aligns with the established direction.
+- List specific reasons and intervene when deviation reaches moderate or above.
+- Ask the user to confirm, pause, or adjust direction before continuing.
+- Assist in updating the configuration when the user's direction changes.
 
-**不能做什么（无明确授权时）：**
-- 删除或覆盖配置，且不展示差异。
-- 无限期阻止用户或拒绝所有工作。
-- 对用户的个人兴趣做价值判断。
-- 访问配置路径之外的文件。
+**What it cannot do (without explicit authorization):**
+- Delete or overwrite the configuration without showing the diff.
+- Block the user indefinitely or refuse all work.
+- Make value judgments about the user's personal interests.
+- Access files outside the configuration path.
 
-**默认行为：**
-- 每次项目对话开始时自动读取配置并评估。
-- 一致或轻度偏离时保持静默，不打扰用户。
-- 中度偏离时暂停并请用户选择："继续"、"调整方向" 或 "暂停再想想"。
-- 高度偏离时清楚说明冲突，在用户确认这是有意探索前不继续深入。
-- 若配置不存在，启动一次性设置访谈。
+**Default behavior:**
+- Automatically read the configuration and evaluate at the start of every project conversation.
+- Stay silent and not disturb the user when aligned or only slightly deviated.
+- Pause and ask the user to choose "Continue", "Adjust direction", or "Pause and think" when moderately deviated.
+- Clearly explain the conflict when highly deviated, and do not proceed deeply until the user confirms this is intentional exploration.
+- If the configuration does not exist, start a one-time setup interview.
 
-## 触发条件
+## Trigger Conditions
 
-按优先级排序：
+Sorted by priority:
 
-1. **自动触发（主要）** — 新项目对话开始时，Agent 自动读取配置并评估。
-2. **用户主动检查（辅助）** — 用户说"我有没有偏"、"这值得做吗"、"检查方向"、"audit this"等。
+1. **Automatic trigger (primary)** — Agent automatically reads the configuration and evaluates when a new project conversation starts.
+2. **User-initiated check (secondary)** — User says "am I drifting", "is this worth it", "check direction", "audit this", etc.
 
-## 不触发的情况
+## When Not to Trigger
 
-- 在已确认方向的项目内部执行具体子任务时。
-- 用户处于纯研究或头脑风暴阶段，尚未投入实际精力。
-- 配置缺失且用户明确拒绝创建。
+- When executing specific subtasks within a project whose direction has already been confirmed.
+- When the user is in a pure research or brainstorming phase and has not yet invested actual effort.
+- When the configuration is missing and the user explicitly refuses to create it.
 
-## 配置格式
+## Configuration Format
 
-文件路径：`~/.config/effort-audit/profile.md`
+File path: `~/.config/effort-audit/profile.md`
 
 ```yaml
 ---
@@ -67,33 +67,33 @@ last_updated: 2026-07-21
 我是后端背景，长期目标是做高并发基础设施。后端需要时我会写简单前端，但不应把大块时间花在 UI 打磨或无关 side project 上。
 ```
 
-## 首次设置
+## Initial Setup
 
-如果 `~/.config/effort-audit/profile.md` 不存在：
+If `~/.config/effort-audit/profile.md` does not exist:
 
-1. 请用户用一句话描述长期方向。
-2. 询问 2-4 个主攻领域。
-3. 询问 2-4 种容易陷入但希望避免的工作模式。
-4. 询问 1-3 个合理的例外情况。
-5. 写入文件 `~/.config/effort-audit/profile.md`。
-6. 确认配置内容，并说明后续会在新项目对话开始时自动检查。
+1. Ask the user to describe their long-term direction in one sentence.
+2. Ask for 2–4 primary domains.
+3. Ask for 2–4 work patterns they easily fall into but want to avoid.
+4. Ask for 1–3 reasonable exceptions.
+5. Write the file to `~/.config/effort-audit/profile.md`.
+6. Confirm the configuration contents, and explain that it will be automatically checked at the start of future project conversations.
 
-## 自动检查工作流
+## Automatic Check Workflow
 
-每次新项目对话开始时：
+At the start of every new project conversation:
 
-1. **读取配置。**
-2. **用一句话总结当前任务。**
-3. **根据 `direction`、`primary_domains`、`avoid_patterns`、`exceptions` 评估一致性。**
-4. **判定偏离等级：**
-   - **一致** — 正常继续，全程不提及审计。
-   - **轻度偏离** — 不主动提示，仅在用户自然停顿后或任务结束时简短一提。
-   - **中度偏离** — 暂停并请用户选择："继续"、"调整方向" 或 "暂停再想想"。
-   - **高度偏离** — 清楚说明冲突，在用户确认这是有意探索前不继续深入。
-5. **若用户选择调整方向**，帮助他把任务重新框定到主方向上。
-6. **若用户选择继续**，记录为例外并继续执行。
+1. **Read the configuration.**
+2. **Summarize the current task in one sentence.**
+3. **Evaluate alignment based on `direction`, `primary_domains`, `avoid_patterns`, `exceptions`.**
+4. **Determine deviation level:**
+   - **Aligned** — proceed normally, do not mention the audit.
+   - **Slight deviation** — do not proactively prompt; only mention briefly after a natural pause or at task completion.
+   - **Moderate deviation** — pause and ask the user to choose: "Continue", "Adjust direction", or "Pause and think".
+   - **High deviation** — clearly explain the conflict, and do not proceed deeply until the user confirms this is intentional exploration.
+5. **If the user chooses to adjust direction**, help them reframe the task toward the main direction.
+6. **If the user chooses to continue**, record it as an exception and proceed.
 
-## 中度偏离输出格式
+## Medium-Deviation Output Format
 
 ```
 方向检查：当前任务可能与你的长期方向不完全一致。
@@ -113,25 +113,25 @@ last_updated: 2026-07-21
 你选哪个？
 ```
 
-## 更新配置
+## Updating Configuration
 
-当用户方向发生变化时：
+When the user's direction changes:
 
-1. 询问要更新哪个字段。
-2. 展示当前值。
-3. 询问新值。
-4. 写入更新后的文件。
-5. 确认变更。
+1. Ask which field to update.
+2. Show the current value.
+3. Ask for the new value.
+4. Write the updated file.
+5. Confirm the change.
 
-## 错误处理
+## Error Handling
 
-| 问题 | 处理方式 |
+| Issue | Handling |
 |---------|----------|
-| 配置文件缺失 | 运行首次设置。 |
-| 配置文件格式损坏 | 报告错误，展示原始内容，请用户修复。 |
-| 当前任务含义模糊 | 评估前先问一个澄清问题。 |
-| 用户不认同审计结果 | 接受用户覆盖，继续执行，并提议若分歧反复出现则更新配置。 |
+| Missing configuration file | Run initial setup. |
+| Corrupted configuration file format | Report the error, show the raw content, and ask the user to fix it. |
+| Ambiguous current task meaning | Ask a clarifying question before evaluating. |
+| User disagrees with audit result | Accept user override, continue execution, and suggest updating the configuration if disagreements recur. |
 
-## 资源
+## Resources
 
-- `references/drift-patterns.md` — 常见的精力漂移模式及识别方法。
+- `references/drift-patterns.md` — Common patterns of effort drift and how to recognize them.

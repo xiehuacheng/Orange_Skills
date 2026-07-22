@@ -1,108 +1,108 @@
 ---
 name: ask-for-tools
-description: Use when 新任务开始或执行中卡住，且 agent 怀疑缺工具是真正障碍时。先自检工具是否已存在，若不存在则向用户说明原因、替代方案和降级/停止选项。
+description: Use when a new task starts or execution is stuck and the agent suspects a missing tool is the real blocker. First self-check whether the tool already exists; if not, explain the reason, alternatives, and fallback/stop options to the user.
 metadata:
   author: xiehuacheng
   version: "1.0.0"
 ---
 
-# Ask for Tools（索要工具）
+# Ask for Tools
 
-当限制 agent 的是工具边界而非推理能力时，主动向用户索要工具，而不是蛮干。
+When the agent is limited by tool boundaries rather than reasoning ability, proactively ask the user for tools instead of brute-forcing it.
 
-**能做什么：**
-- 识别任务可能需要的工具类别（MCP server、CLI 工具、Python/Node 包、API 密钥、权限、本地文件）。
-- 在索要前先自检工具是否已存在、已加载或已配置。
-- 以结构化方式提出请求：缺什么、为什么、缺了会怎样、替代方案。
-- 给用户提供选项：提供工具 / 尝试降级 / 停止任务。
-- 在当前对话中记住用户选择。
+**What it can do:**
+- Identify the categories of tools the task may need (MCP server, CLI tools, Python/Node packages, API keys, permissions, local files).
+- Self-check whether a tool already exists, is loaded, or is configured before asking for it.
+- Make the request in a structured way: what is missing, why, what happens without it, and alternatives.
+- Give the user options: provide the tool / try a fallback / stop the task.
+- Remember the user's choice in the current conversation.
 
-**不能做什么（无明确授权时）：**
-- 安装系统级软件或修改全局配置。
-- 在当前任务上下文外创建或修改持久化配置文件。
-- 因为之前用过某个工具就假设用户已授权。
-- 绕过明确批准获取 API 密钥、Token、凭证或提升权限。
+**What it cannot do (without explicit authorization):**
+- Install system-level software or modify global configuration.
+- Create or modify persistent configuration files outside the current task context.
+- Assume the user has authorized a tool just because it was used before.
+- Bypass explicit approval to obtain API keys, tokens, credentials, or elevated permissions.
 
-**默认行为：**
-- 先问后装。agent 可以检查工具是否存在，但不会在未经批准的情况下自动安装影响系统的工具。
-- 用户拒绝提供工具时，提供降级或停止选项，不默默失败或重复走同一条死路。
-- 每次请求保持简洁，相关工具可分组。
-- 用平实语言解释为什么需要这个工具。
+**Default behavior:**
+- Ask before installing. The agent can check whether a tool exists, but will not automatically install system-affecting tools without approval.
+- When the user refuses to provide a tool, offer fallback or stop options instead of silently failing or repeatedly hitting the same dead end.
+- Keep each request concise; related tools can be grouped.
+- Explain why the tool is needed in plain language.
 
-## 触发条件
+## Trigger Conditions
 
-1. **新任务开始时** — 任务明显需要 agent 可能没有的工具。
-2. **执行中卡住时** — 错误、超时或异常输出强烈暗示缺工具。
-3. **用户说** — "缺工具"、"装个工具"、"是不是缺个工具"、"你能用什么工具"、"ask for tools"。
+1. **At the start of a new task** — the task clearly requires tools the agent may not have.
+2. **When execution is stuck** — errors, timeouts, or abnormal output strongly suggest a missing tool.
+3. **When the user says** — "missing tool", "install a tool", "do I lack a tool", "what tools can you use", "ask for tools".
 
-## 不触发的情况
+## When Not to Trigger
 
-- 当前工具集明显可以完成任务。
-- 失败是现有代码的 bug，不是缺工具。
-- 用户已明确拒绝为当前任务提供某个工具。
+- The current toolset can obviously complete the task.
+- The failure is a bug in existing code, not a missing tool.
+- The user has already explicitly refused to provide a tool for the current task.
 
-## 工具类别与自检
+## Tool Categories and Self-Checks
 
-| 类别 | 示例 | 自检方式 |
+| Category | Examples | Self-Check Method |
 |------|------|---------|
-| CLI 工具 | `gh`、`kubectl`、`ffmpeg`、`pandoc` | `which <tool>` 或 `<tool> --version` |
-| Python 包 | `requests`、`pandas`、`numpy` | `python3 -c "import <pkg>"` |
-| Node 包 | `cheerio`、`axios` | `node -e "require('<pkg>')"` |
-| MCP server | GitHub、浏览器、数据库 | 检查已加载的 MCP 工具或服务器配置 |
-| API 密钥 / Token | OpenAI、GitHub、地图 | 检查环境变量或询问用户 |
-| 系统权限 | 文件写入、网络、sudo | 根据错误信息判断或询问用户 |
-| 本地文件 / 数据 | 配置、凭证、参考文档 | `ls`、`find` 或询问用户 |
+| CLI tools | `gh`, `kubectl`, `ffmpeg`, `pandoc` | `which <tool>` or `<tool> --version` |
+| Python packages | `requests`, `pandas`, `numpy` | `python3 -c "import <pkg>"` |
+| Node packages | `cheerio`, `axios` | `node -e "require('<pkg>')"` |
+| MCP server | GitHub, browser, database | Check loaded MCP tools or server configuration |
+| API keys / tokens | OpenAI, GitHub, maps | Check environment variables or ask the user |
+| System permissions | File writes, network, sudo | Judge from error messages or ask the user |
+| Local files / data | Configs, credentials, reference docs | `ls`, `find`, or ask the user |
 
-## 请求格式
+## Request Format
 
 ```
-我可能需要 [工具名] 来继续这个任务。
+I may need [tool name] to continue this task.
 
-原因：[一句话解释为什么当前工具不够用]
-已检查：[是否已存在 / 是否尝试过低风险获取]
-若缺了它：[会发生什么，或为什么无法继续]
-替代方案：[如果有，用现有工具能否凑合做]
+Reason: [one-sentence explanation of why current tools are insufficient]
+Checked: [whether it already exists / whether low-risk acquisition was attempted]
+If missing: [what will happen, or why it cannot continue]
+Alternative: [if any, whether existing tools can do a passable job]
 
-选项：
-1. 提供 [工具名] — 我会继续按最佳方案执行。
-2. 尝试降级 — 我用现有工具尽量做，但结果可能受限。
-3. 停止任务 — 等你有这个工具时再找我。
+Options:
+1. Provide [tool name] — I will continue with the best plan.
+2. Try fallback — I will do my best with existing tools, but results may be limited.
+3. Stop the task — Come back to me when you have this tool.
 ```
 
-## 工作流
+## Workflow
 
-### 任务开始时预检
+### Pre-check at Task Start
 
-1. 用一句话总结任务。
-2. 判断：agent 最可能缺哪个工具？
-3. 若识别到候选工具，先自检是否存在。
-4. 若存在，直接使用；若不存在，按请求格式提出。
-5. 对 minor uncertainty 不阻塞整个任务，只对高置信度的缺失工具暂停。
+1. Summarize the task in one sentence.
+2. Determine: which tool is the agent most likely missing?
+3. If a candidate tool is identified, self-check whether it exists first.
+4. If it exists, use it directly; if not, make the request using the request format.
+5. Do not block the entire task over minor uncertainty; only pause for high-confidence missing tools.
 
-### 执行中救援
+### Rescue During Execution
 
-1. 出现错误或异常输出时，诊断是否由缺工具导致。
-2. 先排除代码 bug 和错误输入。
-3. 若缺工具，先自检是否存在。
-4. 若存在但不可用，报告实际故障；若不存在，按请求格式提出。
-5. 提供降级或停止选项。
+1. When an error or abnormal output occurs, diagnose whether it is caused by a missing tool.
+2. First rule out code bugs and bad input.
+3. If a tool is missing, self-check whether it exists first.
+4. If it exists but is unavailable, report the actual failure; if it does not exist, make the request using the request format.
+5. Provide fallback or stop options.
 
-### 用户回应处理
+### Handling User Responses
 
-- **用户提供了工具**：确认、验证可用、继续。
-- **用户选择降级**：记录限制、尝试替代方案、保持告知。
-- **用户选择停止**：总结已完成和受阻部分。
-- **用户未回应**：跟进一次后，默认尝试降级。
+- **User provides the tool**: confirm, verify it works, and continue.
+- **User chooses fallback**: record the limitation, try alternatives, and keep the user informed.
+- **User chooses stop**: summarize what has been completed and what is blocked.
+- **User does not respond**: follow up once, then default to trying a fallback.
 
-## 错误处理
+## Error Handling
 
-| 问题 | 处理方式 |
+| Issue | Handling |
 |------|---------|
-| 自检命令失败 | 报告失败并直接询问用户。 |
-| 用户提供了错误工具 | 说明不匹配，重新询问或提供降级。 |
-| 工具存在但无法工作 | 视为工具故障，而非缺工具。 |
-| 用户多次拒绝 | 停止索要同一工具，降级或停止。 |
+| Self-check command fails | Report the failure and ask the user directly. |
+| User provides the wrong tool | Explain the mismatch, re-ask, or offer a fallback. |
+| Tool exists but does not work | Treat it as a tool failure, not a missing tool. |
+| User refuses multiple times | Stop asking for the same tool; fallback or stop. |
 
-## 资源
+## Resources
 
-- `references/tool-categories.md` — 常见工具类别和自检命令速查。
+- `references/tool-categories.md` — quick reference for common tool categories and self-check commands.

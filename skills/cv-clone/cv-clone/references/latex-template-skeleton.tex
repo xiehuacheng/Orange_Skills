@@ -1,0 +1,164 @@
+% =====================================================================
+% cv-clone — Canonical LaTeX Template Skeleton
+% ---------------------------------------------------------------------
+% This is the working scaffold the cv-clone agent extends per sample.
+% All user-fillable slots are exposed as `\newcommand` with defaults.
+%
+% Placeholders (override via `\renewcommand{...}` at the top):
+%   \cvname        Name
+%   \cvlocation    City
+%   \cvemail       Email
+%   \cvphone       Phone
+%   \cvwebsite     Personal site / GitHub
+%   \cvobjective   One-paragraph career goal
+%   \cvskillrows   Skill items (itemize)
+%   \cvexperience  Work experience entries
+%   \cvprojects    Project entries
+%   \cveducation   Education entries
+%   \cvothers      Other entries
+%   \cvphoto{path} Optional photo (only if the sample has a photo slot)
+%
+% Compile:  tectonic template.tex   (or xelatex template.tex)
+% Output:   template.pdf + template_preview-1.png (via pdftoppm -r 150)
+% =====================================================================
+
+\documentclass[11pt,a4paper]{article}
+
+% ---------- Default placeholder values (override with \renewcommand) ----------
+\newcommand{\cvname}{NAME}
+\newcommand{\cvlocation}{CITY}
+\newcommand{\cvemail}{name@example.com}
+\newcommand{\cvphone}{+1-000-000-0000}
+\newcommand{\cvwebsite}{github.com/handle}
+\newcommand{\cvobjective}{Career goal: a one-paragraph description of the role you are targeting.}
+
+% ---------- Packages ----------
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage[margin=1.6cm]{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+\usepackage{calc}
+\usepackage{titlesec}
+\usepackage{etoolbox}
+\usepackage[hidelinks]{hyperref}
+
+% ---------- Fonts (macOS). On Linux/Windows replace as documented ----------
+\setCJKmainfont{PingFang SC}[
+  AutoFakeBold=2,
+  ItalicFont={Kaiti SC},
+  Scale=0.95
+]
+\setmainfont{Times New Roman}
+\xeCJKsetup{CJKecglue=}
+
+% ---------- Colors ----------
+\definecolor{cvrule}{HTML}{1A1A1A}
+\definecolor{cvtext}{HTML}{111111}
+
+% ---------- Global typography ----------
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\linespread{1.18}
+\color{cvtext}
+
+\setlist[itemize]{
+  leftmargin=1.6em,
+  labelsep=0.6em,
+  itemsep=1pt,
+  parsep=0pt,
+  topsep=2pt,
+  label=\textbullet
+}
+
+% ---------- Section title: bold + thin horizontal rule ----------
+\newcommand{\cvsection}[1]{%
+  \par\vspace{6pt}%
+  {\noindent\bfseries\fontsize{12.5pt}{15pt}\selectfont #1}%
+  \par\vspace{1pt}%
+  {\color{cvrule}\hrule height 1.1pt}%
+  \vspace{4pt}%
+  \noindent\ignorespaces
+}
+
+% ---------- Entry first line: title-left, date-right ----------
+\newcommand{\cventry}[2]{%
+  \par\noindent
+  {\bfseries #1}\hfill{\normalfont\color{cvtext}#2}%
+  \par\vspace{2pt}%
+}
+
+% ---------- Skill item: bold label + content ----------
+\newcommand{\cvskill}[2]{%
+  \item \textbf{#1}: #2
+}
+
+% ---------- Optional photo (only enabled when the sample has one) ----------
+% Define with:  \newcommand{\cvphoto}[1]{\begin{tikzpicture}[overlay, remember picture]
+%   \node[anchor=north east, inner sep=0pt] at ([xshift=-1.6cm, yshift=-1.6cm]current page.north east) {%
+%     \begin{tikzpicture}\clip[rounded corners=4pt] (0,0) rectangle (2.4cm,2.4cm);
+%     \node[inner sep=0pt] at (1.2cm,1.2cm) {\includegraphics[width=2.4cm,height=2.4cm,keepaspectratio]{#1}};\end{tikzpicture}};
+%   \end{tikzpicture}}
+% Leave commented when the source sample has no photo.
+
+\begin{document}
+
+% ---------- Header: centered name + contact line ----------
+\begin{center}
+  {\bfseries\fontsize{20pt}{24pt}\selectfont \cvname}\par
+  \vspace{4pt}
+  {\small
+    \cvlocation \quad $\cdot$ \quad
+    \cvemail \quad $\cdot$ \quad
+    \cvphone \quad $\cdot$ \quad
+    \cvwebsite
+  }
+\end{center}
+
+% ---------- Optional photo block (uncomment if \cvphoto is defined) ----------
+% \cvphoto{photo.jpg}
+
+\vspace{6pt}
+
+% ---------- Objective ----------
+\cvsection{Objective}
+\cvobjective
+
+% ---------- Skills ----------
+\cvsection{Skills}
+\begin{itemize}
+  \cvskill{Label}{a, b, c, d}
+  \cvskill{Label}{a, b, c}
+\end{itemize}
+
+% ---------- Experience ----------
+\cvsection{Experience}
+\cventry{Company -- Role}{YYYY.MM -- YYYY.MM}
+\begin{itemize}
+  \item \textbf{Achievement}: brief bullet with quantified impact where possible.
+  \item \textbf{Achievement}: another bullet.
+\end{itemize}
+
+% ---------- Projects ----------
+\cvsection{Projects}
+\cventry{Project name}{Role $\cdot$ YYYY.MM -- YYYY.MM}
+\begin{itemize}
+  \item Bullet with \textbf{key metric} bolded.
+  \item Another bullet.
+\end{itemize}
+
+% ---------- Education ----------
+\cvsection{Education}
+\cventry{University -- Major Degree}{YYYY.MM -- YYYY.MM}
+
+% ---------- Other ----------
+\cvsection{Other}
+\begin{itemize}
+  \item Misc item (languages, certifications, awards, OS contributions).
+\end{itemize}
+
+\end{document}

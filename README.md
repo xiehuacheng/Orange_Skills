@@ -55,6 +55,7 @@ npx skills add /path/to/skills@hot-skills
 | [`ask-for-tools`](./skills/ask-for-tools) | 在 agent 遇到工具边界时主动索要工具 | agent 缺工具或权限时 |
 | [`github-asset-manager`](./skills/github-asset-manager) | 整理 GitHub Stars、仓库与 README | 管理你的 GitHub 数字资产 |
 | [`cv-builder`](./skills/cv-builder) | 从项目、GitHub、旧简历生成技术岗简历/CV | 你要写或更新简历 |
+| [`cv-clone`](./skills/cv-clone) | 复刻目标简历的版式与风格，生成可编辑的 LaTeX 模板 | 你看到一份心仪的样张，想做一份同款排版 |
 | [`init-llm-wiki`](./skills/init-llm-wiki) | 初始化并维护 Karpathy 风格的 LLM Wiki | 你要为一个新领域建 wiki |
 
 下面按字母顺序给出每个 skill 的详细说明。
@@ -85,7 +86,14 @@ npx skills add /path/to/skills@hot-skills
 
 [`cv-builder`](./skills/cv-builder) 用于构建技术岗简历或 CV。
 
+
 它从本地项目、GitHub 仓库、旧简历文件或纯文本笔记中收集材料，通过 sub agent 并行读取并提炼项目亮点，再引导用户确认个人信息、求职目标、经历技能等内容，最终生成 Markdown 草稿并渲染为 HTML/PDF。支持 modern、classic、minimal 等内置模板，也支持自定义模板或 agent 根据描述生成风格。
+
+### cv-clone
+
+[`cv-clone`](./skills/cv-clone) 用于复刻目标简历或 CV 样张的视觉版式，产出可编辑的 LaTeX 模板。
+
+给定一张样例简历（PDF/截图），按其版式生成一份可编译的 LaTeX 模板（`tectonic`/`xelatex` 链），自带 `\newcommand` 占位符，**默认不填内容**——先出模板预览，再问用户是否需要帮忙填真实信息。与 `cv-builder` 互补：`cv-builder` 负责内容，`cv-clone` 负责样式，二者可串联使用（先 cv-builder 出草稿，再 cv-clone 套用样张版式）。输出 macOS/Linux/Windows 三平台安装说明；HTML+CSS 与 Markdown+HTML 作为 references/ 备选。
 
 ### creating-skills
 

@@ -55,6 +55,7 @@ npx skills add /path/to/skills@hot-skills
 | [`ask-for-tools`](../skills/ask-for-tools/) | Proactively ask for tools when the agent hits a tool boundary. | The agent is missing a tool or permission. |
 | [`github-asset-manager`](../skills/github-asset-manager/) | Organize GitHub Stars, repositories, and READMEs. | Manage your GitHub digital assets. |
 | [`cv-builder`](../skills/cv-builder/) | Generate tech resumes/CVs from projects, GitHub, and old resumes. | You need to write or update your resume. |
+| [`cv-clone`](../skills/cv-clone/) | Clone the visual layout of a target resume sample into an editable LaTeX template. | You found a sample you like and want the same layout. |
 | [`init-llm-wiki`](../skills/init-llm-wiki/) | Bootstrap and maintain a Karpathy-style LLM Wiki. | You want to build a wiki for a new domain. |
 
 Detailed descriptions for each skill are given below in alphabetical order.
@@ -75,6 +76,13 @@ It helps users clarify a skill's scenario, trigger timing, and scope through col
 
 [`cv-builder`](../skills/cv-builder/) is used to build tech resumes or CVs.
 
+It collects materials from local projects, GitHub repositories, existing resume files, or plain-text notes; uses sub agents to read and extract project highlights in parallel; guides the user through confirming personal info, career goals, experience, and skills; and finally generates a Markdown draft that can be rendered into HTML/PDF. Supports built-in templates such as modern, classic, and minimal, as well as custom templates or agent-generated styles based on user descriptions.
+
+### cv-clone
+
+[`cv-clone`](../skills/cv-clone/) clones the visual layout of a target resume or CV sample and emits an editable LaTeX template.
+
+Given a sample resume (PDF or screenshot), it produces a compilable LaTeX template (built on `tectonic` / `xelatex`) with `\newcommand` placeholders. By default it does NOT pre-fill real content — it generates the template, asks the user to confirm, and only then unlocks the fill workflow. Pairs with `cv-builder`: cv-builder supplies the content, cv-clone supplies the style, so the two can be chained (run cv-builder for content, then cv-clone to apply a target's visual style). macOS is the primary target; the `SKILL.md` documents `apt`/`scoop` paths for Linux and Windows. HTML+CSS and Markdown+HTML implementations ship as references/ alternatives.
 It collects materials from local projects, GitHub repositories, existing resume files, or plain-text notes; uses sub agents to read and extract project highlights in parallel; guides the user through confirming personal info, career goals, experience, and skills; and finally generates a Markdown draft that can be rendered into HTML/PDF. Supports built-in templates such as modern, classic, and minimal, as well as custom templates or agent-generated styles based on user descriptions.
 
 ### effort-audit

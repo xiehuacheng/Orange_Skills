@@ -3,12 +3,23 @@ name: creating-skills
 description: Use when the user wants to create a new skill, write a SKILL.md, scaffold skill structure, improve an existing skill, or discuss skill design. Triggers on phrases like "create a skill", "new skill", "write a skill", "skill design", "validate skill", or when the user describes a reusable workflow, technique, or domain guide they want Kimi Code to learn.
 metadata:
   author: xiehuacheng
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # Creating Skills
 
 Create effective Kimi Code skills through collaborative brainstorming, clear standards, and human-in-the-loop checkpoints.
+
+> **🔴 Mandatory pre-flight (READ BEFORE STEP 1).** Skipping any of these is the #1 cause of failed skill creation. You MUST read each item below into context, either by opening the file or by `grep`-ing for the relevant section. None of these are optional.
+>
+> | Pre-flight | Why | Where |
+> |---|---|---|
+> | Skill standards (frontmatter, structure, naming, **language**) | If you skip this, you will write SKILL.md in the wrong language. | `references/skill-standards.md` |
+> | Core principles + question templates | Each Step 1-3 has a template that prevents vague asks. | `references/core-principles.md` |
+> | Pre-ship checklist + forward-test protocol | Defines what "done" means. | `references/validation-checklist.md` |
+> | Skill creation anti-patterns | Captures the failures observed in real creation sessions. | `references/skill-creation-checklist.md` |
+>
+> **Default language for `SKILL.md` is English**, unless the user explicitly asks for another language. This is set in `references/skill-standards.md` and applies to every skill you author with this skill. If the user writes to you in Chinese (or any other language) and asks for a skill, that does NOT mean they want the skill in Chinese — they want the skill so they can use it themselves. Always confirm at Step 2, but the default is English.
 
 ## What a Good Skill Does
 
@@ -38,11 +49,56 @@ See `references/skill-standards.md` for a concrete example and writing guidance.
 
 Detailed guidance, examples, and question templates for each principle are in `references/core-principles.md`.
 
+## How to Behave While Waiting for the User
+
+Skill creation has many human-in-the-loop checkpoints. Between them, you have **no work to do**. This skill explicitly defines what waiting looks like, because "stay ready and answer briefly" is not obvious.
+
+During a wait, do all of the following — no more, no less:
+
+1. Show a brief, evidence-anchored status line at the top of your reply: where you are, what is blocking, what action you want from the user.
+2. List the asset(s) needed for the user to act (file path, link, screenshot).
+3. Optionally explain why you cannot proceed, but only in one or two sentences. Do not re-litigate earlier decisions.
+4. Do NOT run any other tool calls. Do NOT start a subagent. Do NOT preempt the user's reply with "while we wait, let me also…".
+
+Do not do these while waiting:
+
+- Re-read the same file repeatedly.
+- Re-ask the same question via `AskUserQuestion`.
+- Issue a foreground `bash` to simulate progress (no progress to simulate).
+- Mark a TodoList task as in_progress and leave it there. Use one of: in_progress if the wait is actively your turn (rare); drop if the user went silent; or omit the task from the active list entirely and add it back when the user returns.
+
+When the user returns, do not re-summarize the whole conversation. Pick up where you left off in one sentence and resume the next step.
+
 ## Skill Creation Workflow
 
 Follow these steps in order. Do not skip checkpoints.
+**Track progress with TodoList.** Create a todo list with the seven steps and update as you go. Use the phase-based format below — tasks are strings, **never** nested arrays:
 
-**Track progress with TodoList.** Create a todo list with the seven steps and update as you go.
+```json
+{
+  "list": [
+    {
+      "phase": "Step 1",
+      "items": [
+        "Explore project context",
+        "Identify trigger phrases",
+        "Name the weakest assumption"
+      ]
+    },
+    {
+      "phase": "Step 2",
+      "items": ["Draft description", "List scope failure modes"]
+    }
+  ]
+}
+```
+
+Common mistakes:
+
+- Passing `items` as an array of arrays (nested strings). `items` must be a flat list of strings.
+- Marking a phase done when only some tasks inside it are done. Mark individual tasks done; promote the phase only when its last task is done.
+- Marking a task in_progress that is actually "waiting on the user". A waiting task should be in_progress while waiting is *active* (you just asked), or **dropped** if the user went silent. Never leave a single task in_progress for hours pretending to work.
+- Re-`init`-ing the whole list every time you take one step. Use `done` / `start` to advance; re-`init` only when the phase structure genuinely changes (e.g. scope pivot).
 
 ### Step 1: Explore & Brainstorm
 
@@ -172,9 +228,31 @@ scripts/quick_validate.py <path/to/skill-folder>
 
 Fix reported issues. Then follow the type-specific validation approach and pre-ship checklist in `references/validation-checklist.md`. Iterate based on findings and user feedback. Bump the skill `version` whenever behavior changes.
 
-**After validation passes, propose a forward-test.** Give the skill a realistic user request and check that it triggers, follows its own workflow, and produces output consistent with its declared boundaries. Fix anything that contradicts the SKILL.md before considering the task done.
+**Forward-test protocol (mandatory before declaring "done").** The forward-test exists to verify that a *clean* agent — one with no context from your creation session — can use the skill correctly. This is the only forward-test that proves anything. Running the skill yourself ("I copied template.tex to /tmp and ran tectonic") is **not** a forward-test; it tests LaTeX, not the skill.
 
-## Quick Reference
+Procedure:
+
+1. Spawn a subagent with the `default` (task) worker. Do not give it any history, recap, or summary of the creation conversation.
+2. In the subagent's first message, give only:
+   - The skill's path (file:// or skill://).
+   - A **realistic single user request** representative of when this skill should trigger (the request must include the trigger phrases listed in your skill's `description`).
+   - A clean working directory (e.g. `/tmp/forward-test-<skill-name>/`).
+3. Do NOT include: the creation transcript, your design rationale, your hypotheses, the test plan, expected outputs, or anything else. The subagent sees only the skill and the user request.
+4. Let the subagent run to completion. Read the artifacts it produced.
+5. Pass criteria:
+   - The subagent triggered the skill (read the SKILL.md).
+   - It followed the skill's own workflow in order.
+   - It stopped at every approval point in the SKILL.md.
+   - Its output respects the skill's "Cannot do" boundaries.
+   - Its output style matches the "Default behavior" declarations.
+6. Fail criteria (any of these means the skill is not done):
+   - The subagent skipped a step.
+   - The subagent did something the "Cannot do" section forbids.
+   - The subagent never read the SKILL.md and went freestyle.
+   - The subagent asked the user for things the skill said it would default.
+7. If the test fails, **fix the SKILL.md**. Do not patch the test, do not patch the subagent's behavior, do not rewrite the skill to match what the subagent *did*. Rewrite until the clean subagent does the right thing.
+
+When the forward-test passes, only then is the skill done. Bump the skill `version` whenever behavior changes.
 
 | Task | Command | Resource |
 |------|---------|----------|
@@ -185,3 +263,5 @@ Fix reported issues. Then follow the type-specific validation approach and pre-s
 
 - **`references/skill-standards.md`** — Detailed standards for frontmatter, writing style, directory structure, and naming.
 - **`references/validation-checklist.md`** — Pre-ship review checklist for documentation, implementation, testing, and sub-agent forward-testing.
+- **`references/skill-creation-checklist.md`** — Anti-patterns observed in real creation sessions; read this before each Step → Next-Step transition.
+- **`references/core-principles.md`** — Question templates and patterns for each workflow step.

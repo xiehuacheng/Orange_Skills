@@ -1,73 +1,50 @@
 # Initialization Steps — Detail
 
-Complements the workflow in `SKILL.md`. These are the specific files and content to create during init, after Step 1-5 approval.
-
----
+Complements `SKILL.md`. The specific files and content to create during init, after Step 1-5 approval.
 
 ## Step 6 — Create the Wiki Skeleton
 
-Create three base directories plus root files. Note that subdirectories under `02-*/` (like `02-Module/数据结构/`) are **not** created at init; that decision waits for Ingest.
+Three base directories plus root files. Subdirectories under `02-*/` (e.g., `02-Module/数据结构/`) are **not** created at init — that decision waits for Ingest.
 
-- `00-Raw/` — raw source materials. Must contain two empty subdirs: `classified/`, `uncategorized/`. **Read-only**: agent must not modify any files inside. Neither this directory nor its subdirs need `index.md`.
+- `00-Raw/` — raw source materials. Must contain two empty subdirs: `classified/`, `uncategorized/`. **Read-only**: never modify any file inside. Neither this dir nor its subdirs need `index.md`.
 - `01-Wiki/` — topic cards.
-- `02-Areas/` *or* `02-Module/` — second-level classification; create only this empty layer. The choice of `02-Areas` vs `02-Module` is made at init and stays fixed. See `references/structure-evolution.md` for when to add subfolders later.
+- `02-Areas/` *or* `02-Module/` — second-level classification; create only this empty layer. Choice is fixed at init. See `references/structure-evolution.md` for when to add subfolders.
 
-This skill currently does **not** define `03-Projects/` or similar. How applied content (projects, experiments, exam questions, case studies) is organized is intentionally left open for future versions based on real-world usage.
-
----
+This skill does **not** define `03-Projects/`. How applied content is organized is intentionally open.
 
 ## Step 7 — Agent Schema Documents
 
-Create the agent schema doc + workflow manual:
-
-- `CLAUDE.md` for Claude Code, `AGENTS.md` for Codex / OpenCode (per platform conventions).
-- `WORKFLOWS.md` as the workflow manual. Use `templates/WORKFLOWS.md` from this skill as the starting template. It should include:
-  - Wiki content types (from Karpathy's original article)
-  - The `type` field required by OKF and its value conventions
-  - Roles and formats of root `index.md` and `log.md`
-  - Rules for file naming, links, frontmatter
-  - Core workflows: clear responsibility boundaries, trigger conditions, execution steps for **Ingest**, **Query**, and **Lint**
-  - Handling of scanned / non-text materials, if any
-
----
+- `CLAUDE.md` for Claude Code, `AGENTS.md` for Codex / OpenCode.
+- `WORKFLOWS.md` from `templates/WORKFLOWS.md` in this skill. Should include: wiki content types (from Karpathy); the `type` field required by OKF; roles of root `index.md` and `log.md`; rules for naming, links, frontmatter; core workflows (Ingest, Query, Lint) with boundaries, triggers, execution steps; handling of scanned / non-text materials.
 
 ## Step 8 — Root `index.md`
 
-Create the **root** `index.md` with `okf_version: "0.1"` in frontmatter and directory entries in the body.
+Frontmatter: `okf_version: "0.1"`. Body: directory entries.
 
-Linking rules:
+Linking:
 
-- `00-Raw/` should **not** be a `[[00-Raw]]` wikilink target (no `index.md` there). Write it as plain text.
-- Links to other directories use Obsidian-style `[[Title]]` or OKF-style `[Title](relative-path)`.
-
----
+- `00-Raw/` should **not** be a `[[00-Raw]]` wikilink target (no `index.md` there). Write as plain text.
+- Other directories: `[[Title]]` or `[Title](relative-path)`.
 
 ## Step 9 — log.md
 
-Create `log.md` using ISO 8601 `YYYY-MM-DD` format for date headings; write the initialization record.
-
----
+ISO 8601 `YYYY-MM-DD` date headings; write the init record.
 
 ## Optional — HTML Dashboard
 
-If the user wants an HTML dashboard to display wiki status, ask first; do not auto-create.
-
----
+Ask first; do not auto-create.
 
 ## Git Repository
 
 If the project has no git repo yet, initialize one before Step 6.
 
----
-
 ## Upgrades and Migration
 
-When `init-llm-wiki` itself has a major update (Ingest flow changes, directory convention changes), wiki projects initialized with the old version do **not** update automatically. The main session should:
+When `init-llm-wiki` itself has a major update, wiki projects initialized with the old version do not update automatically. Main session steps:
 
-1. **Sync `WORKFLOWS.md`** — align the project's root `WORKFLOWS.md` with the current skill template. Project-level files are not auto-overwritten.
-2. **Sync `CLAUDE.md` / `AGENTS.md`** — update outdated conventions.
-3. **Clean up outdated structures** — e.g., older versions may have created `00-Raw/index.md`, `00-Raw/classified/index.md`, `00-Raw/uncategorized/index.md`. The current version clarifies none of these need `index.md`; delete them.
-4. **Update root `index.md`** — remove or convert links to no-longer-existing pages/dirs (e.g., `[[00-Raw]]` → plain text).
-5. **Record migration in `log.md`** — explain what changed and why.
+1. **Sync `WORKFLOWS.md`** and schema docs with the current skill template (project files are not auto-overwritten).
+2. **Clean up outdated structures** — older versions created `00-Raw/index.md`, `00-Raw/classified/index.md`, `00-Raw/uncategorized/index.md`. Current version says none need `index.md`; delete them.
+3. **Update root `index.md`** — remove or convert links to no-longer-existing pages (`[[00-Raw]]` → plain text).
+4. **Record migration in `log.md`** — explain what changed.
 
 After migration, continue Ingest / Query / Lint per the new process.
